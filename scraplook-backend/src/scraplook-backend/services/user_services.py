@@ -1,0 +1,20 @@
+from typing import List
+
+from prisma import Prisma
+from prisma.models import User
+
+
+async def get_all_users(prisma: Prisma) -> List[User]:
+    return await (prisma
+                  .user
+                  .find_many())
+
+async def get_user_by_id(prisma:Prisma, id_user: str) -> User:
+    return await prisma.user.find_unique_or_raise(
+        where={
+            "id": id_user
+        },
+        include={
+            "emails": True
+        }
+    )
