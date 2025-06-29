@@ -1,0 +1,38 @@
+@startuml prisma models
+skinparam classAttributeIconSize 0
+
+class User {
+  id: String <<id>>
+  name: String?
+  password: String
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+class Email {
+  id: String <<id>>
+  address: String
+  userId: String
+}
+
+class Message {
+  id: String <<id>>
+  subject: String?
+  body: String
+  sentAt: DateTime
+  fromId: String
+}
+
+class MessageRecipient {
+  id: String <<id>>
+  messageId: String
+  emailId: String
+  type: String
+}
+
+User "1" -- "0..*" Email : owns >
+Email "1" -- "0..*" Message : sends >
+Email "1" -- "0..*" MessageRecipient : receives >
+Message "1" -- "0..*" MessageRecipient : has recipients >
+
+@enduml
