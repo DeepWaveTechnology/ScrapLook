@@ -1135,7 +1135,6 @@ DecimalListUpdate = Union[
 class UserOptionalCreateInput(TypedDict, total=False):
     """Optional arguments to the User create method"""
     id: _str
-    name: Optional[_str]
     createdAt: datetime.datetime
     updatedAt: datetime.datetime
     emails: 'EmailCreateManyNestedWithoutRelationsInput'
@@ -1143,6 +1142,7 @@ class UserOptionalCreateInput(TypedDict, total=False):
 
 class UserCreateInput(UserOptionalCreateInput):
     """Required arguments to the User create method"""
+    name: _str
     password: _str
 
 
@@ -1152,13 +1152,13 @@ class UserCreateInput(UserOptionalCreateInput):
 class UserOptionalCreateWithoutRelationsInput(TypedDict, total=False):
     """Optional arguments to the User create method, without relations"""
     id: _str
-    name: Optional[_str]
     createdAt: datetime.datetime
     updatedAt: datetime.datetime
 
 
 class UserCreateWithoutRelationsInput(UserOptionalCreateWithoutRelationsInput):
     """Required arguments to the User create method, without relations"""
+    name: _str
     password: _str
 
 class UserConnectOrCreateWithoutRelationsInput(TypedDict):
@@ -1184,13 +1184,24 @@ _UserWhereUnique_id_Input = TypedDict(
     total=True
 )
 
-UserWhereUniqueInput = _UserWhereUnique_id_Input
+_UserWhereUnique_name_Input = TypedDict(
+    '_UserWhereUnique_name_Input',
+    {
+        'name': '_str',
+    },
+    total=True
+)
+
+UserWhereUniqueInput = Union[
+    '_UserWhereUnique_id_Input',
+    '_UserWhereUnique_name_Input',
+]
 
 
 class UserUpdateInput(TypedDict, total=False):
     """Optional arguments for updating a record"""
     id: _str
-    name: Optional[_str]
+    name: _str
     password: _str
     createdAt: datetime.datetime
     updatedAt: datetime.datetime
@@ -1200,7 +1211,7 @@ class UserUpdateInput(TypedDict, total=False):
 class UserUpdateManyMutationInput(TypedDict, total=False):
     """Arguments for updating many records"""
     id: _str
-    name: Optional[_str]
+    name: _str
     password: _str
     createdAt: datetime.datetime
     updatedAt: datetime.datetime
@@ -1764,7 +1775,7 @@ FindFirstUserArgs = FindManyUserArgsFromUser
 class UserWhereInput(TypedDict, total=False):
     """User arguments for searching"""
     id: Union[_str, 'types.StringFilter']
-    name: Union[None, _str, 'types.StringFilter']
+    name: Union[_str, 'types.StringFilter']
     password: Union[_str, 'types.StringFilter']
     createdAt: Union[datetime.datetime, 'types.DateTimeFilter']
     updatedAt: Union[datetime.datetime, 'types.DateTimeFilter']
@@ -1780,7 +1791,7 @@ class UserWhereInput(TypedDict, total=False):
 class UserWhereInputRecursive1(TypedDict, total=False):
     """User arguments for searching"""
     id: Union[_str, 'types.StringFilter']
-    name: Union[None, _str, 'types.StringFilter']
+    name: Union[_str, 'types.StringFilter']
     password: Union[_str, 'types.StringFilter']
     createdAt: Union[datetime.datetime, 'types.DateTimeFilter']
     updatedAt: Union[datetime.datetime, 'types.DateTimeFilter']
@@ -1796,7 +1807,7 @@ class UserWhereInputRecursive1(TypedDict, total=False):
 class UserWhereInputRecursive2(TypedDict, total=False):
     """User arguments for searching"""
     id: Union[_str, 'types.StringFilter']
-    name: Union[None, _str, 'types.StringFilter']
+    name: Union[_str, 'types.StringFilter']
     password: Union[_str, 'types.StringFilter']
     createdAt: Union[datetime.datetime, 'types.DateTimeFilter']
     updatedAt: Union[datetime.datetime, 'types.DateTimeFilter']
@@ -1812,7 +1823,7 @@ class UserWhereInputRecursive2(TypedDict, total=False):
 class UserWhereInputRecursive3(TypedDict, total=False):
     """User arguments for searching"""
     id: Union[_str, 'types.StringFilter']
-    name: Union[None, _str, 'types.StringFilter']
+    name: Union[_str, 'types.StringFilter']
     password: Union[_str, 'types.StringFilter']
     createdAt: Union[datetime.datetime, 'types.DateTimeFilter']
     updatedAt: Union[datetime.datetime, 'types.DateTimeFilter']
@@ -1828,7 +1839,7 @@ class UserWhereInputRecursive3(TypedDict, total=False):
 class UserWhereInputRecursive4(TypedDict, total=False):
     """User arguments for searching"""
     id: Union[_str, 'types.StringFilter']
-    name: Union[None, _str, 'types.StringFilter']
+    name: Union[_str, 'types.StringFilter']
     password: Union[_str, 'types.StringFilter']
     createdAt: Union[datetime.datetime, 'types.DateTimeFilter']
     updatedAt: Union[datetime.datetime, 'types.DateTimeFilter']

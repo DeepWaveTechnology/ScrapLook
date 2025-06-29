@@ -11,10 +11,11 @@
 
 ### Backend
 
+## Présentation
+
 - **Langage**: Python
 - **ORM** : Prisma
 - **Serveur back** : FastAPI
-- **Création de la base de données**: ```prisma db push```
 - **Routes**: 
     - /!\ Toutes les routes concernent une action d'un seul utilisateur.
 
@@ -92,7 +93,19 @@
         - Retours: 201_CREATED
 
     - **Supprimer un mail**:
-        - Nom de l'endpoint: delete 'messages/:id_message'
+        - Nom de l'endpoint: delete 'messages/:id_message' ==> quasiment fait (fonctionne pour les utilisateurs qui suppriment des mails qu'ils ont envoyés)
         - Description: 
         - Paramètres: Identifiant du message à supprimer.
         - Retours: 200_OK
+
+## Installation et lancement du serveur
+
+Se positionner dans le répertoire **ScrapLook\scraplook-backend**.
+
+```bash
+venv_init_scripts/env_build.bat
+prisma db push
+pdm dev #pdm prod ==> pour la production (configuration à éditer dans le fichier 'pyproject.toml')
+```
+
+Accéder à l'url <a href="http://127.0.0.1:8000/docs">localhost</a>, puis appeler l'endpoint **/seeder/populate**, pour créer un jeux de données de départ.

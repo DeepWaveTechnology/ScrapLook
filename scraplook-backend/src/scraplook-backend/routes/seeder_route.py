@@ -15,9 +15,10 @@ router = APIRouter(
 
 @router.get("/populate", status_code=status.HTTP_201_CREATED)
 async def populate_app_data() -> None:
-    await user_seeder()
-    await email_addresses_seeder()
-    await email_messages()
+    prisma = await get_prisma_instance()
+    await user_seeder(prisma)
+    await email_addresses_seeder(prisma)
+    await email_messages(prisma)
 
 @router.get("/user", status_code=status.HTTP_201_CREATED)
 async def user_seeder(prisma: Prisma = Depends(get_prisma_instance)) -> None:
@@ -30,8 +31,6 @@ async def user_seeder(prisma: Prisma = Depends(get_prisma_instance)) -> None:
         {'name': 'Diana', 'password': 'diana321'},
         {'name': 'Ethan', 'password': 'ethan654'},
     ]
-
-    print(prisma.user)
 
     for user_data in users_data:
         await prisma.user.create(

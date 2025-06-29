@@ -60,7 +60,7 @@ class User(bases.BaseUser):
     """Represents a User record"""
 
     id: _str
-    name: Optional[_str] = None
+    name: _str
     password: _str
     createdAt: datetime.datetime
     updatedAt: datetime.datetime
@@ -607,7 +607,7 @@ _User_fields: Dict['types.UserKeys', PartialModelField] = OrderedDict(
         ('name', {
             'name': 'name',
             'is_list': False,
-            'optional': True,
+            'optional': False,
             'type': '_str',
             'is_relational': False,
             'documentation': None,

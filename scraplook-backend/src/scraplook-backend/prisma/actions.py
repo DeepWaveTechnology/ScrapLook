@@ -175,7 +175,8 @@ class UserActions(Generic[_PrismaModelT]):
         user = await User.prisma().create(
             data={
                 # data to create a User record
-                'password': 'ggciceaie',
+                'name': 'ggciceaie',
+                'password': 'bbehjachib',
             },
         )
         ```
@@ -230,11 +231,13 @@ class UserActions(Generic[_PrismaModelT]):
             data=[
                 {
                     # data to create a User record
-                    'password': 'bbehjachib',
+                    'name': 'cadfabfehe',
+                    'password': 'dgiiaaijj',
                 },
                 {
                     # data to create a User record
-                    'password': 'cadfabfehe',
+                    'name': 'bfaiacjjfc',
+                    'password': 'eigcfgbif',
                 },
             ],
             skip_duplicates=True,
@@ -288,7 +291,7 @@ class UserActions(Generic[_PrismaModelT]):
         ```py
         user = await User.prisma().delete(
             where={
-                'id': 'dgiiaaijj',
+                'id': 'bagcfbhiig',
             },
         )
         ```
@@ -340,7 +343,7 @@ class UserActions(Generic[_PrismaModelT]):
         ```py
         user = await User.prisma().find_unique(
             where={
-                'id': 'bfaiacjjfc',
+                'id': 'cghideieh',
             },
         )
         ```
@@ -391,7 +394,7 @@ class UserActions(Generic[_PrismaModelT]):
         ```py
         user = await User.prisma().find_unique_or_raise(
             where={
-                'id': 'eigcfgbif',
+                'id': 'biabhbdai',
             },
         )
         ```
@@ -643,7 +646,7 @@ class UserActions(Generic[_PrismaModelT]):
         ```py
         user = await User.prisma().update(
             where={
-                'id': 'bagcfbhiig',
+                'id': 'idghgaicb',
             },
             data={
                 # data to update the User record to
@@ -700,15 +703,17 @@ class UserActions(Generic[_PrismaModelT]):
         ```py
         user = await User.prisma().upsert(
             where={
-                'id': 'cghideieh',
+                'id': 'fjfddhigg',
             },
             data={
                 'create': {
-                    'id': 'cghideieh',
-                    'password': 'cadfabfehe',
+                    'id': 'fjfddhigg',
+                    'name': 'bfaiacjjfc',
+                    'password': 'eigcfgbif',
                 },
                 'update': {
-                    'password': 'cadfabfehe',
+                    'name': 'bfaiacjjfc',
+                    'password': 'eigcfgbif',
                 },
             },
         )
@@ -756,7 +761,7 @@ class UserActions(Generic[_PrismaModelT]):
         # update all User records
         total = await User.prisma().update_many(
             data={
-                'id': 'biabhbdai'
+                'id': 'hjaecfifb'
             },
             where={}
         )
@@ -1119,7 +1124,7 @@ class EmailActions(Generic[_PrismaModelT]):
         ```py
         users = await Email.prisma().query_raw(
             'SELECT * FROM Email WHERE id = ?',
-            'idghgaicb',
+            'cbbbjbfcii',
         )
         ```
         """
@@ -1159,7 +1164,7 @@ class EmailActions(Generic[_PrismaModelT]):
         ```py
         user = await Email.prisma().query_first(
             'SELECT * FROM Email WHERE address = ?',
-            'fjfddhigg',
+            'bbejhfidcb',
         )
         ```
         """
@@ -1198,8 +1203,8 @@ class EmailActions(Generic[_PrismaModelT]):
         email = await Email.prisma().create(
             data={
                 # data to create a Email record
-                'address': 'hjaecfifb',
-                'userId': 'cbbbjbfcii',
+                'address': 'bgeecijdgg',
+                'userId': 'bdiicjafbj',
             },
         )
         ```
@@ -1254,13 +1259,13 @@ class EmailActions(Generic[_PrismaModelT]):
             data=[
                 {
                     # data to create a Email record
-                    'address': 'bbejhfidcb',
-                    'userId': 'bgeecijdgg',
+                    'address': 'bgehebiafc',
+                    'userId': 'bghffegacj',
                 },
                 {
                     # data to create a Email record
-                    'address': 'bdiicjafbj',
-                    'userId': 'bgehebiafc',
+                    'address': 'bhghchehcc',
+                    'userId': 'dcgchcbbf',
                 },
             ],
             skip_duplicates=True,
@@ -1314,7 +1319,7 @@ class EmailActions(Generic[_PrismaModelT]):
         ```py
         email = await Email.prisma().delete(
             where={
-                'id': 'bghffegacj',
+                'id': 'bdedcabahc',
             },
         )
         ```
@@ -1366,7 +1371,7 @@ class EmailActions(Generic[_PrismaModelT]):
         ```py
         email = await Email.prisma().find_unique(
             where={
-                'id': 'bhghchehcc',
+                'id': 'ghfhiafcb',
             },
         )
         ```
@@ -1417,7 +1422,7 @@ class EmailActions(Generic[_PrismaModelT]):
         ```py
         email = await Email.prisma().find_unique_or_raise(
             where={
-                'id': 'dcgchcbbf',
+                'id': 'heejgedji',
             },
         )
         ```
@@ -1669,7 +1674,7 @@ class EmailActions(Generic[_PrismaModelT]):
         ```py
         email = await Email.prisma().update(
             where={
-                'id': 'bdedcabahc',
+                'id': 'bjgjgibgbf',
             },
             data={
                 # data to update the Email record to
@@ -1726,17 +1731,17 @@ class EmailActions(Generic[_PrismaModelT]):
         ```py
         email = await Email.prisma().upsert(
             where={
-                'id': 'ghfhiafcb',
+                'id': 'bbbgbhfjge',
             },
             data={
                 'create': {
-                    'id': 'ghfhiafcb',
-                    'address': 'bdiicjafbj',
-                    'userId': 'bgehebiafc',
+                    'id': 'bbbgbhfjge',
+                    'address': 'bhghchehcc',
+                    'userId': 'dcgchcbbf',
                 },
                 'update': {
-                    'address': 'bdiicjafbj',
-                    'userId': 'bgehebiafc',
+                    'address': 'bhghchehcc',
+                    'userId': 'dcgchcbbf',
                 },
             },
         )
@@ -1784,7 +1789,7 @@ class EmailActions(Generic[_PrismaModelT]):
         # update all Email records
         total = await Email.prisma().update_many(
             data={
-                'userId': 'heejgedji'
+                'userId': 'igbehcbab'
             },
             where={}
         )
@@ -2147,7 +2152,7 @@ class MessageActions(Generic[_PrismaModelT]):
         ```py
         users = await Message.prisma().query_raw(
             'SELECT * FROM Message WHERE id = ?',
-            'bjgjgibgbf',
+            'bdadaadhag',
         )
         ```
         """
@@ -2187,7 +2192,7 @@ class MessageActions(Generic[_PrismaModelT]):
         ```py
         user = await Message.prisma().query_first(
             'SELECT * FROM Message WHERE subject = ?',
-            'bbbgbhfjge',
+            'bgiggdidbf',
         )
         ```
         """
@@ -2226,8 +2231,8 @@ class MessageActions(Generic[_PrismaModelT]):
         message = await Message.prisma().create(
             data={
                 # data to create a Message record
-                'body': 'igbehcbab',
-                'fromId': 'bdadaadhag',
+                'body': 'caaaedabfc',
+                'fromId': 'bigibebcib',
             },
         )
         ```
@@ -2282,13 +2287,13 @@ class MessageActions(Generic[_PrismaModelT]):
             data=[
                 {
                     # data to create a Message record
-                    'body': 'bgiggdidbf',
-                    'fromId': 'caaaedabfc',
+                    'body': 'bigaiehgcc',
+                    'fromId': 'beeifcbebf',
                 },
                 {
                     # data to create a Message record
-                    'body': 'bigibebcib',
-                    'fromId': 'bigaiehgcc',
+                    'body': 'bgcigfahea',
+                    'fromId': 'bcejgaggif',
                 },
             ],
             skip_duplicates=True,
@@ -2342,7 +2347,7 @@ class MessageActions(Generic[_PrismaModelT]):
         ```py
         message = await Message.prisma().delete(
             where={
-                'id': 'beeifcbebf',
+                'id': 'idfjadbcc',
             },
         )
         ```
@@ -2394,7 +2399,7 @@ class MessageActions(Generic[_PrismaModelT]):
         ```py
         message = await Message.prisma().find_unique(
             where={
-                'id': 'bgcigfahea',
+                'id': 'hgdhbjhhj',
             },
         )
         ```
@@ -2445,7 +2450,7 @@ class MessageActions(Generic[_PrismaModelT]):
         ```py
         message = await Message.prisma().find_unique_or_raise(
             where={
-                'id': 'bcejgaggif',
+                'id': 'ecjjjfbae',
             },
         )
         ```
@@ -2697,7 +2702,7 @@ class MessageActions(Generic[_PrismaModelT]):
         ```py
         message = await Message.prisma().update(
             where={
-                'id': 'idfjadbcc',
+                'id': 'bhhfibbigf',
             },
             data={
                 # data to update the Message record to
@@ -2754,17 +2759,17 @@ class MessageActions(Generic[_PrismaModelT]):
         ```py
         message = await Message.prisma().upsert(
             where={
-                'id': 'hgdhbjhhj',
+                'id': 'ijdbeffgg',
             },
             data={
                 'create': {
-                    'id': 'hgdhbjhhj',
-                    'body': 'bigibebcib',
-                    'fromId': 'bigaiehgcc',
+                    'id': 'ijdbeffgg',
+                    'body': 'bgcigfahea',
+                    'fromId': 'bcejgaggif',
                 },
                 'update': {
-                    'body': 'bigibebcib',
-                    'fromId': 'bigaiehgcc',
+                    'body': 'bgcigfahea',
+                    'fromId': 'bcejgaggif',
                 },
             },
         )
@@ -2812,7 +2817,7 @@ class MessageActions(Generic[_PrismaModelT]):
         # update all Message records
         total = await Message.prisma().update_many(
             data={
-                'deleted': True
+                'deleted': False
             },
             where={}
         )
@@ -3175,7 +3180,7 @@ class MessageRecipientActions(Generic[_PrismaModelT]):
         ```py
         users = await MessageRecipient.prisma().query_raw(
             'SELECT * FROM MessageRecipient WHERE id = ?',
-            'bhhfibbigf',
+            'cbachdgfce',
         )
         ```
         """
@@ -3215,7 +3220,7 @@ class MessageRecipientActions(Generic[_PrismaModelT]):
         ```py
         user = await MessageRecipient.prisma().query_first(
             'SELECT * FROM MessageRecipient WHERE messageId = ?',
-            'ijdbeffgg',
+            'chbfcacbd',
         )
         ```
         """
@@ -3254,9 +3259,9 @@ class MessageRecipientActions(Generic[_PrismaModelT]):
         messagerecipient = await MessageRecipient.prisma().create(
             data={
                 # data to create a MessageRecipient record
-                'messageId': 'jjfeafhfj',
-                'emailId': 'cbachdgfce',
-                'type': 'chbfcacbd',
+                'messageId': 'efggddide',
+                'emailId': 'caficfigfb',
+                'type': 'bfidgijfjc',
             },
         )
         ```
@@ -3311,15 +3316,15 @@ class MessageRecipientActions(Generic[_PrismaModelT]):
             data=[
                 {
                     # data to create a MessageRecipient record
-                    'messageId': 'efggddide',
-                    'emailId': 'caficfigfb',
-                    'type': 'bfidgijfjc',
-                },
-                {
-                    # data to create a MessageRecipient record
                     'messageId': 'ihieecagf',
                     'emailId': 'bghfciaafe',
                     'type': 'bgchfhgceh',
+                },
+                {
+                    # data to create a MessageRecipient record
+                    'messageId': 'cafeiaccbc',
+                    'emailId': 'gaddfhfh',
+                    'type': 'gieegcbeg',
                 },
             ],
             skip_duplicates=True,
@@ -3373,7 +3378,7 @@ class MessageRecipientActions(Generic[_PrismaModelT]):
         ```py
         messagerecipient = await MessageRecipient.prisma().delete(
             where={
-                'id': 'cafeiaccbc',
+                'id': 'bgcffadich',
             },
         )
         ```
@@ -3425,7 +3430,7 @@ class MessageRecipientActions(Generic[_PrismaModelT]):
         ```py
         messagerecipient = await MessageRecipient.prisma().find_unique(
             where={
-                'id': 'gaddfhfh',
+                'id': 'fcbichhci',
             },
         )
         ```
@@ -3476,7 +3481,7 @@ class MessageRecipientActions(Generic[_PrismaModelT]):
         ```py
         messagerecipient = await MessageRecipient.prisma().find_unique_or_raise(
             where={
-                'id': 'gieegcbeg',
+                'id': 'bcggadccgf',
             },
         )
         ```
@@ -3728,7 +3733,7 @@ class MessageRecipientActions(Generic[_PrismaModelT]):
         ```py
         messagerecipient = await MessageRecipient.prisma().update(
             where={
-                'id': 'bgcffadich',
+                'id': 'jdcfdcgc',
             },
             data={
                 # data to update the MessageRecipient record to
@@ -3785,19 +3790,19 @@ class MessageRecipientActions(Generic[_PrismaModelT]):
         ```py
         messagerecipient = await MessageRecipient.prisma().upsert(
             where={
-                'id': 'fcbichhci',
+                'id': 'cafdaehjid',
             },
             data={
                 'create': {
-                    'id': 'fcbichhci',
-                    'messageId': 'ihieecagf',
-                    'emailId': 'bghfciaafe',
-                    'type': 'bgchfhgceh',
+                    'id': 'cafdaehjid',
+                    'messageId': 'cafeiaccbc',
+                    'emailId': 'gaddfhfh',
+                    'type': 'gieegcbeg',
                 },
                 'update': {
-                    'messageId': 'ihieecagf',
-                    'emailId': 'bghfciaafe',
-                    'type': 'bgchfhgceh',
+                    'messageId': 'cafeiaccbc',
+                    'emailId': 'gaddfhfh',
+                    'type': 'gieegcbeg',
                 },
             },
         )
@@ -3845,7 +3850,7 @@ class MessageRecipientActions(Generic[_PrismaModelT]):
         # update all MessageRecipient records
         total = await MessageRecipient.prisma().update_many(
             data={
-                'messageId': 'bcggadccgf'
+                'messageId': 'gifdddbia'
             },
             where={}
         )
