@@ -6,6 +6,6 @@ src/scraplook_backend.egg-info/*
 src/scraplook-backend/prisma/*
 *.pyc
 *.lock
-
+.idea
 
 /generated/prisma

@@ -59,25 +59,36 @@
     - **Afficher tous les mails envoyés**:
         - Nom de l'endpoint: get 'messages/sent_messages'
         - Description: 
-        - Paramètres: /
+        - Paramètres: Identifiant de l'addresse mail utilisée pour envoyer les mails.
         - Retours: List[Message]
 
     - **Afficher tous les mails reçus**:
-        - Nom de l'endpoint: get 'messages/received_messages'
+        - Nom de l'endpoint: get 'messages/received_messages' ==> fait
         - Description: 
-        - Paramètres: /
+        - Paramètres: Identifiant de l'addresse mail utilisée pour recevoir les mails.
         - Retours:  List[Message]
 
     - **Afficher un mail**:
-        - Nom de l'endpoint: get 'messages/:id_message'
+        - Nom de l'endpoint: get 'messages/:id_message' ==> fait
         - Description: 
         - Paramètres: Identifiant du message à afficher.
         - Retours: Message
 
     - **Envoyer un mail**:
-        - Nom de l'endpoint: post 'messages/'
+        - Nom de l'endpoint: post 'messages/' ==> fait
         - Description: 
-        - Paramètres: Email à envoyer.
+        - Paramètres: Email à envoyer :
+        ```py
+            class MessageRecipientInput(BaseModel):
+                emailId: str
+                type: str
+
+            class MessageInput(BaseModel):
+                subject: Optional[str] = None
+                body: str
+                fromId: str
+                recipients: List[MessageRecipientInput]
+        ```
         - Retours: 201_CREATED
 
     - **Supprimer un mail**:

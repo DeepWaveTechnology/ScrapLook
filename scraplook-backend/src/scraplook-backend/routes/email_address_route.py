@@ -19,7 +19,7 @@ router = APIRouter(
 async def get_all(user_id: str, prisma: Prisma = Depends(get_prisma_instance)) -> List[Email]:
     return await get_user_email_addresses(prisma, user_id)
 
-@router.post("/", status_code=status.HTTP_200_OK)
+@router.post("/", status_code=status.HTTP_201_CREATED)
 async def add_user_email_address(email_info: EmailAddressInput, prisma: Prisma = Depends(get_prisma_instance)):
     return await add_email_address(prisma, email_info)
 
