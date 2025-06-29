@@ -19,31 +19,39 @@
     - /!\ Toutes les routes concernent une action d'un seul utilisateur.
 
     - **Récupérer les informations de l'utilisateur**:
-        - Nom de l'endpoint: get 'user/:id_user'
+        - Nom de l'endpoint: get 'user/:id_user' ==> fait
         - Description:
         - Paramètres: Identifiant de l'utilisateur où récupérer les informations, hors mails.
         - Retours: User
 
     - **Ajouter une adresse mail**: 
-        - Nom de l'endpoint: get 'email_address/'
+        - Nom de l'endpoint: get 'email_address/' ==> fait
         - Description:
-        - Paramètres: Email à ajouter.
+        - Paramètres: Email à ajouter :
+        ```py
+            address: str
+            userId: str
+        ```
         - Retours: 201_CREATED
 
     - **Supprimer une adresse mail**:
-        - Nom de l'endpoint: delete 'email_address/:id_email_address'
+        - Nom de l'endpoint: delete 'email_address/:id_email_address' ==> fait
         - Description: 
         - Paramètres: Identifiant de l'adresse mail à supprimer
         - Retours: 200_OK
 
     - **Modifier une adresse mail**:
-        - Nom de l'endpoint: patch 'email_address/'
+        - Nom de l'endpoint: patch 'email_address/' ==> fait
         - Description: Modifier l'adresse mail d'un utilisateur, à savoir le champ **address** uniquement.
-        - Paramètres: Email à modifier.
+        - Paramètres: Identifiant de l'utilisateur et Email à modifier :
+        ```py
+            address: str
+            userId: str
+        ```
         - Retours: 200_OK
 
     - **Afficher les adresses mails**:
-        - Nom de l'endpoint: get 'email_address/all'
+        - Nom de l'endpoint: get 'email_address/all' ==> fait
         - Description: 
         - Paramètres: 
         - Retours: List[Email]

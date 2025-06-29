@@ -1,0 +1,20 @@
+[project]
+name = "scraplook-backend"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "Antonin Durand, ", email = "antonin.durand576@gmail.com"},
+    {name = "Valentin Menon", email = "valentin.menon@efrei.net"},
+    {name = "Matéo Massinond", email = "valentin.menon@efrei.net"},
+]
+dependencies = ["fastapi[standard]>=0.115.14", "prisma>=0.15.0"]
+requires-python = ">=3.13"
+readme = "README.md"
+license = {text = "MIT"}
+
+[tool.pdm]
+distribution = true
+
+[tool.pdm.scripts]
+dev = "fastapi dev src/scraplook-backend/main.py"
+prod = "fastapi run src/scraplook-backend/main.py --host 127.0.0.1 --port 5000"

@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// generator
+generator client {
+  provider = "prisma-client-py"
+  output   = "src/scraplook-backend/prisma/"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String?
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  emails Email[]
+}
+
+model Email {
+  id      String @id @default(uuid())
+  address String @unique
+  user    User   @relation(fields: [userId], references: [id])
+  userId  String
+
+  sentMessages     Message[]          @relation("FromEmail")
+  receivedMessages MessageRecipient[]
+}
+
+model Message {
+  id      String   @id @default(uuid())
+  subject String?
+  body    String
+  sentAt  DateTime @default(now())
+
+  fromEmail Email  @relation("FromEmail", fields: [fromId], references: [id])
+  fromId    String
+
+  recipients MessageRecipient[]
+}
+
+model MessageRecipient {
+  id        String  @id @default(uuid())
+  message   Message @relation(fields: [messageId], references: [id])
+  messageId String
+
+  email   Email  @relation(fields: [emailId], references: [id])
+  emailId String
+
+  type String
+}
