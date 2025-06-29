@@ -3,7 +3,6 @@ node_modules
 .venv
 
 src/scraplook_backend.egg-info/*
-src/scraplook-backend/prisma/*
 *.pyc
 *.lock
 .idea
