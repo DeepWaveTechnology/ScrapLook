@@ -44,6 +44,8 @@ model Message {
   fromEmail Email  @relation("FromEmail", fields: [fromId], references: [id])
   fromId    String
 
+  deleted Boolean @default(false)
+
   recipients MessageRecipient[]
 }
 

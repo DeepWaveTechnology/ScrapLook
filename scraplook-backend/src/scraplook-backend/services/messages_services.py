@@ -8,6 +8,7 @@ async def get_user_messages_sent(prisma: Prisma, id_email_address: str) -> List[
     return await prisma.message.find_many(
         where={
             "fromId": id_email_address,
+            "deleted": False
         },
         include={
             "recipients": {
@@ -45,9 +46,10 @@ async def get_user_messages_received(prisma: Prisma, id_email_address: str) -> L
     )
 
 async def get_user_message(prisma: Prisma, id_message: str) -> Message:
-    return await prisma.message.find_many(
+    return await prisma.message.find_unique_or_raise(
         where={
             "id": id_message,
+            "deleted": False
         },
         include={
             "recipients": {
@@ -77,8 +79,11 @@ async def send_message(prisma: Prisma, message_info: MessageInput) -> None:
     )
 
 async def delete_message(prisma: Prisma, id_message: str) -> None:
-    await prisma.message.delete(
+    await prisma.message.update(
         where={
             "id": id_message
+        },
+        data={
+            "deleted": True
         }
     )
