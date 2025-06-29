@@ -31,10 +31,8 @@ model Email {
   user      User     @relation(fields: [userId], references: [id])
   userId    String
 
-  sentMessages Message[] @relation("FromEmail")
-  receivedMessagesTo MessageRecipientTo[]
-  receivedMessagesCci MessageRecipientCci[]
-  receivedMessagesBcc MessageRecipientBcc[]
+  sentMessages     Message[]        @relation("FromEmail")
+  receivedMessages MessageRecipient[]
 }
 
 model Message {
@@ -46,32 +44,16 @@ model Message {
   from      Email    @relation("FromEmail", fields: [fromId], references: [id])
   fromId    String
 
-  to        MessageRecipientTo[]
-  cci       MessageRecipientCci[]
-  bcc       MessageRecipientBcc[]
+  recipients MessageRecipient[]
 }
 
-model MessageRecipientTo {
+model MessageRecipient {
   id        String   @id @default(uuid())
   message   Message  @relation(fields: [messageId], references: [id])
   messageId String
 
   email     Email    @relation(fields: [emailId], references: [id])
   emailId   String
-}
-model MessageRecipientCci {
-  id        String   @id @default(uuid())
-  message   Message  @relation(fields: [messageId], references: [id])
-  messageId String
 
-  email     Email    @relation(fields: [emailId], references: [id])
-  emailId   String
-}
-model MessageRecipientBcc {
-  id        String   @id @default(uuid())
-  message   Message  @relation(fields: [messageId], references: [id])
-  messageId String
-
-  email     Email    @relation(fields: [emailId], references: [id])
-  emailId   String
+  type      String 
 }
