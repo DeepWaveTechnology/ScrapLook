@@ -1,6 +1,6 @@
 [project]
 name = "scraplook-backend"
-version = "0.1.7"
+version = "0.1.8"
 description = "Default template for PDM package"
 authors = [
     {name = "Antonin Durand, ", email = "antonin.durand576@gmail.com"},
@@ -29,7 +29,9 @@ prod = "fastapi run src/scraplook-backend/main.py --host 127.0.0.1 --port 5000"
 pylint = "pylint --rcfile config/.pylintrc --enable-all-extensions src/scraplook-backend/"
 black = "black --config pyproject.toml src/scraplook-backend"
 isort = "isort --verbose --settings-path config/.isort.cfg src/scraplook-backend/"
-execute_all_tools = { composite = ["black", "pylint"] }
+radon = "radon cc src/scraplook-backend/ -na -s --exclude 'src/scraplook-backend/prisma/*'"
+execute_all_tools = { composite = ["radon", "black", "pylint"] }
 
 [tool.black]
 extend-exclude = 'src/scraplook-backend/prisma/'
+
