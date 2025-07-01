@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, status, HTTPException
-
-from config.prisma_client import get_prisma_instance
 from models.user import UserInput
 from prisma import Prisma, errors
 from prisma.models import User
 from services.user_services import get_all_users, get_user_by_id, add_new_user
+
+from config.prisma_client import get_prisma_instance
+
 
 router = APIRouter(
     prefix="/user",

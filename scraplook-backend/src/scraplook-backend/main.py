@@ -3,8 +3,8 @@ from logging import getLogger
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from config.prisma_client import get_prisma_instance, disconnect_prisma
 from routes import email_address_route, messages_route, user_route, seeder_route
+from config.prisma_client import get_prisma_instance, disconnect_prisma
 
 #manage app lifespan events
 @asynccontextmanager

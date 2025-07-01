@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 
-from config.prisma_client import get_prisma_instance
 from models.message import MessageInput
 from prisma import Prisma, errors
 from prisma.models import Message
 from services.messages_services import get_user_messages_sent, get_user_messages_received, get_user_message, send_message, delete_message
+from config.prisma_client import get_prisma_instance
 
 router = APIRouter(
     prefix="/messages",

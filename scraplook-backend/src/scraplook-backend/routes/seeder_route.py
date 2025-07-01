@@ -3,8 +3,8 @@ Database seeder, to initialize database with data.
 """
 from random import randint
 from fastapi import APIRouter, status, Depends
-from config.prisma_client import get_prisma_instance
 from prisma import Prisma
+from config.prisma_client import get_prisma_instance
 
 router = APIRouter(
     prefix="/seeder",
