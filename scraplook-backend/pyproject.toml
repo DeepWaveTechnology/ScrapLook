@@ -1,6 +1,6 @@
 [project]
 name = "scraplook-backend"
-version = "0.1.8"
+version = "0.1.9"
 description = "Default template for PDM package"
 authors = [
     {name = "Antonin Durand, ", email = "antonin.durand576@gmail.com"},
@@ -30,7 +30,8 @@ pylint = "pylint --rcfile config/.pylintrc --enable-all-extensions src/scraplook
 black = "black --config pyproject.toml src/scraplook-backend"
 isort = "isort --verbose --settings-path config/.isort.cfg src/scraplook-backend/"
 radon = "radon cc src/scraplook-backend/ -na -s --exclude 'src/scraplook-backend/prisma/*'"
-execute_all_tools = { composite = ["radon", "black", "pylint"] }
+xenon = "xenon src/scraplook-backend --max-absolute B --max-modules B --max-average A --exclude src/scraplook-backend/prisma/*"
+execute_all_tools = { composite = ["radon", "xenon", "black", "pylint"] }
 
 [tool.black]
 extend-exclude = 'src/scraplook-backend/prisma/'
