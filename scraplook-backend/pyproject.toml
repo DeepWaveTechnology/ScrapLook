@@ -5,7 +5,7 @@ description = "Default template for PDM package"
 authors = [
     {name = "Antonin Durand, ", email = "antonin.durand576@gmail.com"},
     {name = "Valentin Menon", email = "valentin.menon@efrei.net"},
-    {name = "Matéo Massinond", email = "valentin.menon@efrei.net"},
+    {name = "Matéo Massinond", email = "mateo.massinond@efrei.net"},
 ]
 dependencies = [
     "fastapi[standard]>=0.115.14",
