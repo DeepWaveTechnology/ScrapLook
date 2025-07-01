@@ -8,3 +8,5 @@ src/scraplook_backend.egg-info/*
 .idea
 
 /generated/prisma
+
+.pdm-python

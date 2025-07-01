@@ -1,10 +1,8 @@
-from typing import List
-
 from models.message import MessageInput
 from prisma import Prisma
 from prisma.models import Message
 
-async def get_user_messages_sent(prisma: Prisma, id_email_address: str) -> List[Message]:
+async def get_user_messages_sent(prisma: Prisma, id_email_address: str) -> list[Message]:
     return await prisma.message.find_many(
         where={
             "fromId": id_email_address,
@@ -23,7 +21,7 @@ async def get_user_messages_sent(prisma: Prisma, id_email_address: str) -> List[
         }
     )
 
-async def get_user_messages_received(prisma: Prisma, id_email_address: str) -> List[Message]:
+async def get_user_messages_received(prisma: Prisma, id_email_address: str) -> list[Message]:
     return await prisma.message.find_many(
         where={
           "recipients": {

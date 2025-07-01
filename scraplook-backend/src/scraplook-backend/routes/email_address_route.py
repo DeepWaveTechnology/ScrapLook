@@ -1,5 +1,3 @@
-from typing import List
-
 from fastapi import APIRouter, Depends, status, HTTPException
 
 from config.prisma_client import get_prisma_instance
@@ -15,19 +13,19 @@ router = APIRouter(
     dependencies=[]
 )
 
-@router.get("/all", status_code=status.HTTP_200_OK, response_model=List[Email])
-async def get_all(user_id: str, prisma: Prisma = Depends(get_prisma_instance)) -> List[Email]:
+@router.get("/all", status_code=status.HTTP_200_OK, response_model=list[Email])
+async def get_all(user_id: str, prisma: Prisma = Depends(get_prisma_instance)) -> list[Email]:
     return await get_user_email_addresses(prisma, user_id)
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def add_user_email_address(email_info: EmailAddressInput, prisma: Prisma = Depends(get_prisma_instance)):
     try:
         await add_email_address(prisma, email_info)
-    except errors.UniqueViolationError:
+    except errors.UniqueViolationError as error:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Email address already exists"
-        )
+        ) from error
 
 @router.patch("/{id_email_address}", status_code=status.HTTP_200_OK)
 async def update_user_email_address(id_email_address: str, email_info: EmailAddressInput, prisma: Prisma = Depends(get_prisma_instance)):

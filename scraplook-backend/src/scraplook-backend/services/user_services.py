@@ -1,11 +1,9 @@
-from typing import List
-
 from models.user import UserInput
 from prisma import Prisma
 from prisma.models import User
 
 
-async def get_all_users(prisma: Prisma) -> List[User]:
+async def get_all_users(prisma: Prisma) -> list[User]:
     return await (prisma
                   .user
                   .find_many())

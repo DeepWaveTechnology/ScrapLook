@@ -1,10 +1,8 @@
-from typing import List
-
 from models.email_address import EmailAddressInput
 from prisma import Prisma
 from prisma.models import Email
 
-async def get_user_email_addresses(prisma: Prisma, id_user: str) -> List[Email]:
+async def get_user_email_addresses(prisma: Prisma, id_user: str) -> list[Email]:
     return await prisma.email.find_many(
         where={
             "userId": id_user,

@@ -1,5 +1,5 @@
+from typing import Optional
 from pydantic import BaseModel
-from typing import List, Optional
 
 class MessageRecipientInput(BaseModel):
     emailId: str
@@ -9,4 +9,4 @@ class MessageInput(BaseModel):
     subject: Optional[str] = None
     body: str
     fromId: str
-    recipients: List[MessageRecipientInput]
+    recipients: list[MessageRecipientInput]

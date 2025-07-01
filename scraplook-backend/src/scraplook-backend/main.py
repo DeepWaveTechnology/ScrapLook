@@ -8,7 +8,7 @@ from routes import email_address_route, messages_route, user_route, seeder_route
 
 #manage app lifespan events
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_: FastAPI):
     #start db connection
     await get_prisma_instance()
 
@@ -38,6 +38,3 @@ app.include_router(seeder_route.router)
 app.include_router(email_address_route.router)
 app.include_router(messages_route.router)
 app.include_router(user_route.router)
-
-
-

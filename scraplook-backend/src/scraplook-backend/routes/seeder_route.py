@@ -1,7 +1,6 @@
 """
 Database seeder, to initialize database with data.
 """
-
 from random import randint
 from fastapi import APIRouter, status, Depends
 from config.prisma_client import get_prisma_instance
@@ -53,7 +52,7 @@ async def email_addresses_seeder(prisma: Prisma = Depends(get_prisma_instance)) 
 async def email_messages(prisma: Prisma = Depends(get_prisma_instance)) -> None:
     user_email_addresses = await prisma.email.find_many()
 
-    for index, email_address in enumerate(user_email_addresses):
+    for _, email_address in enumerate(user_email_addresses):
         await prisma.message.create(
             data={
                 "subject": f"Envoi mail par {email_address.address}",
