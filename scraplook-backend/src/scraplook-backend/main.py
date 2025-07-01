@@ -6,10 +6,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from routes import email_address_route, messages_route, user_route, seeder_route
 from config.prisma_client import get_prisma_instance, disconnect_prisma
 
-#manage app lifespan events
+
+# manage app lifespan events
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    #start db connection
+    # start db connection
     await get_prisma_instance()
 
     yield
@@ -17,10 +18,11 @@ async def lifespan(_: FastAPI):
     # disconnect to db
     await disconnect_prisma()
 
-#create server
+
+# create server
 app = FastAPI(debug=True, lifespan=lifespan)
 
-#update app access
+# update app access
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -29,11 +31,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-#update logger used
+# update logger used
 uvicorn_access_logger = getLogger("uvicorn.access")
 uvicorn_access_logger.disabled = False
 
-#add app routes
+# add app routes
 app.include_router(seeder_route.router)
 app.include_router(email_address_route.router)
 app.include_router(messages_route.router)

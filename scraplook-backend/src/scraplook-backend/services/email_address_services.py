@@ -2,6 +2,7 @@ from models.email_address import EmailAddressInput
 from prisma import Prisma
 from prisma.models import Email
 
+
 async def get_user_email_addresses(prisma: Prisma, id_user: str) -> list[Email]:
     return await prisma.email.find_many(
         where={
@@ -9,12 +10,16 @@ async def get_user_email_addresses(prisma: Prisma, id_user: str) -> list[Email]:
         }
     )
 
+
 async def add_email_address(prisma: Prisma, email_info: EmailAddressInput) -> None:
     await prisma.email.create(
         data=email_info.model_dump(),
     )
 
-async def update_email_address(prisma: Prisma, id_email_address: str, email_info: EmailAddressInput) -> None:
+
+async def update_email_address(
+    prisma: Prisma, id_email_address: str, email_info: EmailAddressInput
+) -> None:
     await prisma.email.update(
         where={
             "id": id_email_address,
@@ -23,6 +28,7 @@ async def update_email_address(prisma: Prisma, id_email_address: str, email_info
             "address": email_info.address
         }
     )
+
 
 async def delete_email_address(prisma: Prisma, id_email_address: str) -> None:
     await prisma.email.delete(

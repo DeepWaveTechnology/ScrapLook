@@ -4,11 +4,10 @@ from prisma.models import User
 
 
 async def get_all_users(prisma: Prisma) -> list[User]:
-    return await (prisma
-                  .user
-                  .find_many())
+    return await prisma.user.find_many()
 
-async def get_user_by_id(prisma:Prisma, id_user: str) -> User:
+
+async def get_user_by_id(prisma: Prisma, id_user: str) -> User:
     return await prisma.user.find_unique_or_raise(
         where={
             "id": id_user
@@ -18,7 +17,6 @@ async def get_user_by_id(prisma:Prisma, id_user: str) -> User:
         }
     )
 
+
 async def add_new_user(prisma: Prisma, user_info: UserInput) -> User:
-    return await prisma.user.create(
-        data=user_info.model_dump()
-    )
+    return await prisma.user.create(data=user_info.model_dump())
