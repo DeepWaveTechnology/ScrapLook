@@ -1,0 +1,38 @@
+[project]
+name = "scraplook-backend"
+version = "0.1.9"
+description = "Default template for PDM package"
+authors = [
+    {name = "Antonin Durand, ", email = "antonin.durand576@gmail.com"},
+    {name = "Valentin Menon", email = "valentin.menon@efrei.net"},
+    {name = "Matéo Massinond", email = "mateo.massinond@efrei.net"},
+]
+dependencies = [
+    "fastapi[standard]>=0.115.14",
+    "prisma>=0.15.0",
+    "pylint[pydantic]>=3.3.7",
+    "black>=25.1.0",
+    "isort>=6.0.1",
+    "radon>=6.0.1",
+    "xenon>=0.9.3"
+]
+requires-python = ">=3.13"
+readme = "README.md"
+license = {text = "MIT"}
+
+[tool.pdm]
+distribution = true
+
+[tool.pdm.scripts]
+dev = "fastapi dev src/scraplook-backend/main.py"
+prod = "fastapi run src/scraplook-backend/main.py --host 127.0.0.1 --port 5000"
+pylint = "pylint --rcfile config/.pylintrc --enable-all-extensions src/scraplook-backend/"
+black = "black --config pyproject.toml src/scraplook-backend"
+isort = "isort --verbose --settings-path config/.isort.cfg src/scraplook-backend/"
+radon = "radon cc src/scraplook-backend/ -na -s --exclude 'src/scraplook-backend/prisma/*'"
+xenon = "xenon src/scraplook-backend --max-absolute B --max-modules B --max-average A --exclude src/scraplook-backend/prisma/*"
+execute_all_tools = { composite = ["radon", "xenon", "black", "pylint"] }
+
+[tool.black]
+extend-exclude = 'src/scraplook-backend/prisma/'
+
