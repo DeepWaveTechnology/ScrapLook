@@ -9,6 +9,7 @@ src/scraplook_backend.egg-info/*
 .idea
 
 *.db
+**/prisma/*
 
 /generated/prisma
 
