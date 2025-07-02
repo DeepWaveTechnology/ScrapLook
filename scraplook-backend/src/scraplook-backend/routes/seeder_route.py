@@ -1,5 +1,4 @@
-"""
-Database seeder, to initialize database with data.
+"""Database seeder, to initialize database with data.
 """
 
 from random import randint
@@ -28,10 +27,7 @@ async def user_seeder(prisma: Prisma = Depends(get_prisma_instance)) -> None:
     users_data = [
         {"name": "AntoninD", "password": "azerty"},
         {"name": "Alice", "password": "alice123"},
-        {"name": "Bob", "password": "bob456"},
-        {"name": "Charlie", "password": "charlie789"},
-        {"name": "Diana", "password": "diana321"},
-        {"name": "Ethan", "password": "ethan654"},
+
     ]
 
     for user_data in users_data:

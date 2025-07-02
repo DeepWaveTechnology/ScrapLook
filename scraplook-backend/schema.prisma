@@ -17,7 +17,7 @@ datasource db {
 
 model User {
   id        String   @id @default(uuid())
-  name      String @unique
+  name      String   @unique
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -44,7 +44,8 @@ model Message {
   fromEmail Email  @relation("FromEmail", fields: [fromId], references: [id])
   fromId    String
 
-  deleted Boolean @default(false)
+  deleted_by_sender   Boolean @default(false)
+  deleted_by_receiver Boolean @default(false)
 
   recipients MessageRecipient[]
 }

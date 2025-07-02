@@ -53,5 +53,7 @@ async def send_mail(
 
 
 @router.delete("/", status_code=status.HTTP_200_OK)
-async def delete_mail(id_message: str, prisma: Prisma = Depends(get_prisma_instance)):
-    await delete_message(prisma, id_message)
+async def delete_mail(
+        id_email_address: str, id_message: str, prisma: Prisma = Depends(get_prisma_instance)
+) -> None:
+    await delete_message(prisma, id_email_address, id_message)

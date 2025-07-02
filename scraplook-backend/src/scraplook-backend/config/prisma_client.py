@@ -5,8 +5,7 @@ _db_connection: Optional[Prisma] = None
 
 
 async def get_prisma_instance() -> Prisma:
-    """
-    Get prisma instance to manage db.
+    """Get prisma instance to manage db.
 
     :return:
     """
