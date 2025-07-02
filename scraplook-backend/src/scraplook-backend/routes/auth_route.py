@@ -118,14 +118,6 @@ async def get_current_user(
         raise credentials_exception
     return User(username=user_in_db.username)
 
-
-# === Exemple de route protégée ===
 @router.get("/me", response_model=User)
 async def read_users_me(current_user: Annotated[User, Depends(get_current_user)]):
     return current_user
-
-
-# === Pour test simple ===
-@router.get("/", status_code=status.HTTP_200_OK)
-async def read_new_feature():
-    return {"message": "This is a new feature route!"}
