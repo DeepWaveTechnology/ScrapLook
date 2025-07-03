@@ -1,16 +1,11 @@
-"""Database seeder, to initialize database with data.
-"""
+"""Database seeder, to initialize database with data."""
 
 from random import randint
 from fastapi import APIRouter, status, Depends
 from prisma import Prisma
 from config.prisma_client import get_prisma_instance
 
-router = APIRouter(
-    prefix="/seeder",
-    tags=["seeder"],
-    dependencies=[]
-)
+router = APIRouter(prefix="/seeder", tags=["seeder"], dependencies=[])
 
 
 @router.get("/populate", status_code=status.HTTP_201_CREATED)
@@ -27,7 +22,6 @@ async def user_seeder(prisma: Prisma = Depends(get_prisma_instance)) -> None:
     users_data = [
         {"name": "AntoninD", "password": "azerty"},
         {"name": "Alice", "password": "alice123"},
-
     ]
 
     for user_data in users_data:

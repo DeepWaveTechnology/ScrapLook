@@ -24,15 +24,9 @@ async def update_email_address(
         where={
             "id": id_email_address,
         },
-        data={
-            "address": email_info.address
-        }
+        data={"address": email_info.address},
     )
 
 
 async def delete_email_address(prisma: Prisma, id_email_address: str) -> None:
-    await prisma.email.delete(
-        where={
-            "id": id_email_address
-        }
-    )
+    await prisma.email.delete(where={"id": id_email_address})

@@ -1,22 +1,18 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 
 from models.email_address import EmailAddressInput
-from prisma import Prisma, errors
-from prisma.models import Email
 from services.email_address_services import (
     get_user_email_addresses,
     add_email_address,
     delete_email_address,
     update_email_address,
 )
+from prisma import Prisma, errors
+from prisma.models import Email
 from config.prisma_client import get_prisma_instance
 
 
-router = APIRouter(
-    prefix="/email_address",
-    tags=["email_address"],
-    dependencies=[]
-)
+router = APIRouter(prefix="/email_address", tags=["email_address"], dependencies=[])
 
 
 @router.get("/all", status_code=status.HTTP_200_OK, response_model=list[Email])
