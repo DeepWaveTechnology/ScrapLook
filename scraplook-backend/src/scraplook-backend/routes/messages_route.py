@@ -1,8 +1,6 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 
 from models.message import MessageInput
-from prisma import Prisma, errors
-from prisma.models import Message
 from services.messages_services import (
     get_user_messages_sent,
     get_user_messages_received,
@@ -10,13 +8,12 @@ from services.messages_services import (
     send_message,
     delete_message,
 )
+from prisma import Prisma, errors
+from prisma.models import Message
 from config.prisma_client import get_prisma_instance
 
-router = APIRouter(
-    prefix="/messages",
-    tags=["messages"],
-    dependencies=[]
-)
+router = APIRouter(prefix="/messages", tags=["messages"], dependencies=[])
+
 
 @router.get("/sent_messages", response_model=list[Message])
 async def get_sent_messages(
@@ -40,8 +37,7 @@ async def get_message(
         return await get_user_message(prisma, id_message)
     except errors.RecordNotFoundError as error:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Message not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Message not found"
         ) from error
 
 
@@ -54,6 +50,8 @@ async def send_mail(
 
 @router.delete("/", status_code=status.HTTP_200_OK)
 async def delete_mail(
-        id_email_address: str, id_message: str, prisma: Prisma = Depends(get_prisma_instance)
+    id_email_address: str,
+    id_message: str,
+    prisma: Prisma = Depends(get_prisma_instance),
 ) -> None:
     await delete_message(prisma, id_email_address, id_message)

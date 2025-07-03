@@ -1,17 +1,13 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from models.user import UserInput
-from prisma import Prisma, errors
-from prisma.models import User
 from services.user_services import get_all_users, get_user_by_id, add_new_user
 
 from config.prisma_client import get_prisma_instance
+from prisma import Prisma, errors
+from prisma.models import User
 
 
-router = APIRouter(
-    prefix="/user",
-    tags=["user"],
-    dependencies=[]
-)
+router = APIRouter(prefix="/user", tags=["user"], dependencies=[])
 
 
 @router.get("/all", status_code=status.HTTP_200_OK, response_model=list[User])
