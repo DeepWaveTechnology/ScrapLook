@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 
+from config.app_config import Config
+from config.prisma_client import get_prisma_instance
 from models.message import MessageInput
 from services.messages_services import (
     get_user_messages_sent,
@@ -10,7 +12,6 @@ from services.messages_services import (
 )
 from prisma import Prisma, errors
 from prisma.models import Message
-from config.prisma_client import get_prisma_instance
 
 router = APIRouter(prefix="/messages", tags=["messages"], dependencies=[])
 
@@ -36,6 +37,7 @@ async def get_message(
     try:
         return await get_user_message(prisma, id_message)
     except errors.RecordNotFoundError as error:
+        Config.logger.warning("Message not found: %s", error)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Message not found"
         ) from error

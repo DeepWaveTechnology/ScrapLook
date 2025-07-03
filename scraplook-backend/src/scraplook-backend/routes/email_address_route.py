@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 
+from config.app_config import Config
+from config.prisma_client import get_prisma_instance
 from models.email_address import EmailAddressInput
 from services.email_address_services import (
     get_user_email_addresses,
@@ -9,7 +11,6 @@ from services.email_address_services import (
 )
 from prisma import Prisma, errors
 from prisma.models import Email
-from config.prisma_client import get_prisma_instance
 
 
 router = APIRouter(prefix="/email_address", tags=["email_address"], dependencies=[])
@@ -29,6 +30,7 @@ async def add_user_email_address(
     try:
         await add_email_address(prisma, email_info)
     except errors.UniqueViolationError as error:
+        Config.logger.warning("Email address already exists: %s", error)
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="Email address already exists"
         ) from error

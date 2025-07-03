@@ -3,8 +3,8 @@
 from random import randint
 from fastapi import APIRouter, status, Depends
 from prisma import Prisma
-from config.prisma_client import get_prisma_instance
 from passlib.context import CryptContext
+from config.prisma_client import get_prisma_instance
 
 router = APIRouter(prefix="/seeder", tags=["seeder"], dependencies=[])
 
@@ -67,6 +67,7 @@ async def email_messages(prisma: Prisma = Depends(get_prisma_instance)) -> None:
             }
         )
 
+
 @router.get("/reset", status_code=status.HTTP_200_OK)
 async def reset_database(prisma: Prisma = Depends(get_prisma_instance)):
     await prisma.messagerecipient.delete_many()
@@ -74,4 +75,3 @@ async def reset_database(prisma: Prisma = Depends(get_prisma_instance)):
     await prisma.email.delete_many()
     await prisma.user.delete_many()
     return {"message": "Database reset successfully"}
-

@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, status, HTTPException
+
+from config.app_config import Config
+from config.prisma_client import get_prisma_instance
 from models.user import UserInput
 from services.user_services import get_all_users, get_user_by_id, add_new_user
 
-from config.prisma_client import get_prisma_instance
 from prisma import Prisma, errors
 from prisma.models import User
 
@@ -20,6 +22,7 @@ async def get_user(id_user: str, prisma: Prisma = Depends(get_prisma_instance)) 
     try:
         return await get_user_by_id(prisma, id_user)
     except errors.RecordNotFoundError as error:
+        Config.logger.warning("User not found: %s", error)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         ) from error
@@ -32,6 +35,7 @@ async def add_user(
     try:
         return await add_new_user(prisma, user_info)
     except errors.UniqueViolationError as error:
+        Config.logger.warning("User name already exists: %s", error)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User name already exists"
         ) from error
