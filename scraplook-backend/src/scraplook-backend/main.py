@@ -3,7 +3,7 @@ from logging import getLogger
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routes import email_address_route, messages_route, user_route, seeder_route
+from routes import email_address_route, messages_route, user_route, seeder_route, auth_route
 from config.prisma_client import get_prisma_instance, disconnect_prisma
 
 
@@ -40,3 +40,5 @@ app.include_router(seeder_route.router)
 app.include_router(email_address_route.router)
 app.include_router(messages_route.router)
 app.include_router(user_route.router)
+app.include_router(auth_route.router)
+
