@@ -11,7 +11,6 @@ declare module 'vue' {
     Card: typeof import('primevue/card')['default']
     Divider: typeof import('primevue/divider')['default']
     Header: typeof import('./src/components/Header.vue')['default']
-    HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     Message: typeof import('primevue/message')['default']
     ProgressSpinner: typeof import('primevue/progressspinner')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
