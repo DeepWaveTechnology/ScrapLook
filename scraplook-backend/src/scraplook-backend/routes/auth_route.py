@@ -1,13 +1,14 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from models.user import Token, UserOutput
 from passlib.context import CryptContext
-from pydantic import BaseModel
 from typing import Annotated
 from datetime import datetime, timedelta, timezone
 from jose import jwt, JWTError
 
-from prisma import Prisma
+from prisma import Prisma, errors
 from config.prisma_client import get_prisma_instance
+from services.user_services import get_user_by_name
 
 # === Configuration JWT ===
 SECRET_KEY = "57699903d1ebdf47ba210a5be9ea4178a5588ba8e7b3cefd70cc3b9e888cc67d"
@@ -27,25 +28,6 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-# === Schémas Pydantic ===
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
-
-class TokenData(BaseModel):
-    username: str | None = None
-
-
-class User(BaseModel):
-    username: str
-    disabled: bool | None = False
-
-
-class UserInDB(User):
-    hashed_password: str
-
-
 # === Fonctions auxiliaires ===
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
@@ -58,18 +40,12 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
-async def get_user_from_db(prisma: Prisma, username: str) -> UserInDB | None:
-    user = await prisma.user.find_unique(where={"name": username})
-    if user:
-        return UserInDB(username=user.name, hashed_password=user.password)
-    return None
-
-
 async def authenticate_user(prisma: Prisma, username: str, password: str):
-    user = await get_user_from_db(prisma, username)
-    if not user:
+    try:
+        user = await get_user_by_name(prisma, username)
+    except errors.RecordNotFoundError:
         return None
-    if not verify_password(password, user.hashed_password):
+    if not verify_password(password, user.password):
         return None
     return user
 
@@ -90,7 +66,7 @@ async def login_for_access_token(
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={"sub": user.name}, expires_delta=access_token_expires
     )
     return Token(access_token=access_token, token_type="bearer")
 
@@ -99,7 +75,7 @@ async def login_for_access_token(
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
     prisma: Prisma = Depends(get_prisma_instance)
-) -> User:
+) -> UserOutput:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Impossible de valider les identifiants",
@@ -113,11 +89,17 @@ async def get_current_user(
     except JWTError:
         raise credentials_exception
 
-    user_in_db = await get_user_from_db(prisma, username)
+    user_in_db = await get_user_by_name(prisma, username)
+    user_in_db.password = ""
     if user_in_db is None:
         raise credentials_exception
-    return User(username=user_in_db.username)
 
-@router.get("/me", response_model=User)
-async def read_users_me(current_user: Annotated[User, Depends(get_current_user)]):
+    return UserOutput(
+        **user_in_db.model_dump(),
+        token=Token(access_token=token, token_type="bearer"),
+    )
+
+
+@router.get("/me", response_model=UserOutput)
+async def read_users_me(current_user: Annotated[UserOutput, Depends(get_current_user)]):
     return current_user
