@@ -1,18 +1,32 @@
 <template>
-  <header class="bg-white shadow-md p-4 flex items-center justify-between">
-    <div class="text-2xl font-bold text-blue-600">
-      <router-link to="/">MonApp</router-link>
-    </div>
-    <nav class="space-x-4">
-      <router-link to="/users" class="text-gray-700 hover:text-blue-500">Utilisateurs</router-link>
-    </nav>
-  </header>
+  <Menubar
+    :model="items"
+    class="bg-white shadow-md px-10"
+    style="height: 80px; font-size: 1.25rem; font-weight: 600;"
+  />
 </template>
 
 <script setup>
-// Aucun script spécifique nécessaire pour ce header simple
+import { ref } from 'vue'
+import Menubar from 'primevue/menubar'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+const items = ref([
+  {
+    label: 'MonApp',
+    icon: 'pi pi-home',
+    command: () => router.push('/'),
+    class: 'text-blue-600 text-3xl font-bold'
+  },
+  {
+    label: 'Utilisateurs',
+    icon: 'pi pi-users',
+    command: () => router.push('/users'),
+    class: 'text-lg'
+  },
+])
 </script>
 
 <style scoped>
-/* Tu peux ajouter des styles personnalisés ici si besoin */
 </style>
