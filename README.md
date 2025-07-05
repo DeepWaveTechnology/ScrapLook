@@ -1,5 +1,16 @@
 # ScrapLook
 
+## Table des matières
+
+* [ScrapLook](#scraplook)
+  * [Table des matières](#table-des-matières)
+  * [Technologies utilisées](#technologies-utilisées-)
+    * [Front](#front)
+    * [Backend](#backend)
+  * [Présentation](#présentation)
+  * [Installation et lancement du serveur back](#installation-et-lancement-du-serveur-back)
+  * [Installation et lancement du serveur front](#installation-et-lancement-du-serveur-front)
+
 ## Technologies utilisées 
 
 ### Front
@@ -98,7 +109,7 @@
         - Paramètres: Identifiant du message à supprimer.
         - Retours: 200_OK
 
-## Installation et lancement du serveur
+## Installation et lancement du serveur back
 
 Se positionner dans le répertoire **ScrapLook\scraplook-backend**.
 
@@ -109,3 +120,5 @@ pdm dev #pdm prod ==> pour la production (configuration à éditer dans le fichi
 ```
 
 Accéder à l'url <a href="http://127.0.0.1:8000/docs">localhost</a>, puis appeler l'endpoint **/seeder/populate**, pour créer un jeux de données de départ.
+
+## Installation et lancement du serveur front

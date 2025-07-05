@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from logging import getLogger
 
-from config.app_config import Config, load_app_config
+from config.app_config import get_app_config, AppConfigNotCreatedException
 from config.prisma_client import get_prisma_instance, disconnect_prisma
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,26 +14,25 @@ from routes import (
     auth_route,
 )
 
-
 # manage app lifespan events
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     # load app config
-    load_app_config(
-        path_logger_conf="logger_config.yaml",
-        path_env=".env"
-    )
+    try:
+        app_config = get_app_config()
+    except AppConfigNotCreatedException as error:
+        raise RuntimeError(error) from error
 
-    Config.logger.info("Starting application...")
+    app_config.logger.info("Starting application...")
 
     # start db connection
     await get_prisma_instance()
-    Config.logger.info("Application finished ...")
 
     yield
 
     # disconnect to db
     await disconnect_prisma()
+    app_config.logger.info("Application stopping ...")
 
 
 # create server

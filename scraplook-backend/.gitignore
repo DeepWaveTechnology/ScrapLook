@@ -16,4 +16,4 @@ src/scraplook_backend.egg-info/*
 .pdm-python
 *.env
 
-logs/*
+*.log

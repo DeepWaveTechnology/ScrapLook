@@ -1,4 +1,4 @@
-from config.app_config import Config
+from config.app_config import get_app_config
 from prisma import Prisma, errors
 from config.prisma_client import get_prisma_instance
 from services.user_services import get_user_by_name
@@ -13,7 +13,6 @@ from jose import jwt, JWTError
 
 # === Configuration JWT ===
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # === Initialisation du router ===
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -24,6 +23,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 # === Password hashing ===
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+APP_CONFIG = get_app_config()
 
 # === Fonctions auxiliaires ===
 def verify_password(plain_password, hashed_password):
@@ -34,7 +34,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=15))
     to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, Config.encryption_key, algorithm=ALGORITHM)
+    return jwt.encode(to_encode, APP_CONFIG.env_data.encryption_key, algorithm=ALGORITHM)
 
 
 async def authenticate_user(prisma: Prisma, username: str, password: str):
@@ -55,14 +55,14 @@ async def login_for_access_token(
 ):
     user = await authenticate_user(prisma, form_data.username, form_data.password)
     if not user:
-        Config.logger.warning("Authentication failed for user: %s", form_data.username)
+        APP_CONFIG.logger.warning("Authentication failed for user: %s", form_data.username)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Nom d'utilisateur ou mot de passe incorrect",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(minutes=APP_CONFIG.env_data.access_token_duration_minutes)
     access_token = create_access_token(
         data={"sub": user.name}, expires_delta=access_token_expires
     )
@@ -81,10 +81,10 @@ async def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, Config.encryption_key, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, APP_CONFIG.env_data.encryption_key, algorithms=[ALGORITHM])
         username = payload.get("sub")
     except JWTError as error:
-        Config.logger.warning("Failed to decode jwt token '%s': %s", token, error)
+        APP_CONFIG.logger.warning("Failed to decode jwt token '%s': %s", token, error)
         raise credentials_exception from error
 
     if payload.get("sub") is None:

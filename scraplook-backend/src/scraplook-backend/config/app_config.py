@@ -1,23 +1,54 @@
-from logging import Logger, getLogger
+from logging import Logger
 from typing import Optional
 from dotenv import dotenv_values
+from pydantic import BaseModel, ValidationError, Field
 
-from config.logger import create_logger
+from config.logger import create_logger, CannotCreateLoggerException, LoggerNotFound
+
+_app_config: Optional['Config'] = None
+_default_encryption_key_value = "57699903d1ebdf47ba210a5be9ea4178a5588ba8e7b3cefd70cc3b9e888cc67d"
+
+class AppConfigNotCreatedException(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+
+class EnvData(BaseModel):
+    encryption_key: Optional[str] = Field(default=_default_encryption_key_value)
+    access_token_duration_minutes: int
+
+class Config(BaseModel):
+    logger: Logger
+    env_data: EnvData
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
-class Config: #pylint: disable=R0903
-    logger: Optional[Logger] = None
-    encryption_key: str
+def get_app_config() -> Config:
+    global _app_config
+    default_logger_name = "main_logger"
+    path_logger_conf= "logger_config.yaml"
+    path_env = ".env"
 
-def load_app_config(path_logger_conf: str, path_env: str) -> None:
-    #create logger
-    create_logger(path_logger_conf)
-    Config.logger = getLogger("main_logger")
+    #load app config if not loaded
+    if not _app_config:
 
-    #load environment variables
-    env_values = dotenv_values(path_env)
-    encryption_key_index = "encryption_key"
-    if encryption_key_index in env_values:
-        Config.encryption_key = env_values["encryption_key"]
-    else:
-        Config.encryption_key = "57699903d1ebdf47ba210a5be9ea4178a5588ba8e7b3cefd70cc3b9e888cc67d"
+        #retrieve logger
+        try:
+            logger = create_logger(path_logger_conf, default_logger_name)
+        except (CannotCreateLoggerException, LoggerNotFound) as error:
+            raise AppConfigNotCreatedException(f"Unexpected error while creating logger, error: {error}")
+
+        #retrieve app config
+        try:
+            env_data = EnvData.model_validate(dotenv_values(path_env))
+        except (OSError, ValidationError) as error:
+            raise AppConfigNotCreatedException(f"Unexpected error while reading env data, error: {error}")
+
+        #create app config
+        _app_config = Config(
+            logger=logger,
+            env_data=env_data,
+        )
+
+    return _app_config
