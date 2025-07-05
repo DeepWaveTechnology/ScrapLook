@@ -1,8 +1,9 @@
+"""
+Main module to manage FastAPI server.
+"""
+
 from contextlib import asynccontextmanager
 from logging import getLogger
-
-from config.app_config import get_app_config, AppConfigNotCreatedException
-from config.prisma_client import get_prisma_instance, disconnect_prisma
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -13,10 +14,16 @@ from routes import (
     seeder_route,
     auth_route,
 )
+from config.app_config import get_app_config, AppConfigNotCreatedException
+from config.prisma_client import get_prisma_instance, disconnect_prisma
+
 
 # manage app lifespan events
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    """
+    Manage the lifespan of the FastAPI application.
+    """
     # load app config
     try:
         app_config = get_app_config()

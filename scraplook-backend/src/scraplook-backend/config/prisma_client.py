@@ -1,3 +1,7 @@
+"""
+Module that manages db connection with prisma and singleton method.
+"""
+
 from typing import Optional
 from prisma import Prisma
 
@@ -5,9 +9,11 @@ _db_connection: Optional[Prisma] = None
 
 
 async def get_prisma_instance() -> Prisma:
-    """Get prisma instance to manage db.
+    """
+    Return prisma instance if available, otherwise create a new instance and return it.
 
-    :return:
+    Returns:
+        Prisma: prisma instance.
     """
     global _db_connection  # pylint: disable=W0603
 
@@ -18,7 +24,13 @@ async def get_prisma_instance() -> Prisma:
     return _db_connection
 
 
-async def disconnect_prisma():
+async def disconnect_prisma() -> None:
+    """
+    Disconnect prisma instance.
+
+    Returns:
+
+    """
     global _db_connection  # pylint: disable=W0603
 
     if _db_connection and _db_connection.is_connected():
