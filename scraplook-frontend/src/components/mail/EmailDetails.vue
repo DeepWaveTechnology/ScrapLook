@@ -11,16 +11,21 @@
     </Message>
 
     <div v-else>
-      <p class="text-lg text-purple-700 mb-4">
+      <p class="text-lg text-purple-700 mb-4" v-if="originalAddress">
         Adresse email actuelle :
-        <strong>{{ originalAddress || "Inconnue" }}</strong>
+        <strong>{{ originalAddress }}</strong>
       </p>
+      <p v-else>Adresse email actuelle : <strong>Inconnue</strong></p>
 
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 mb-1">
           Modifier l'adresse email :
         </label>
-        <InputText v-model="editedAddress" class="w-full max-w-md" />
+        <InputText
+          v-model="editedAddress"
+          class="w-full max-w-md"
+          @keydown.enter.prevent
+        />
       </div>
 
       <Button
@@ -47,7 +52,10 @@
       </Message>
 
       <EmailDetailsSent :messages="sentMessages" :idEmailAddress="emailId" />
-      <EmailDetailsReceived :messages="receivedMessages" :idEmailAddress="emailId" />
+      <EmailDetailsReceived
+        :messages="receivedMessages"
+        :idEmailAddress="emailId"
+      />
     </div>
   </div>
 </template>
@@ -81,11 +89,27 @@ onMounted(async () => {
     );
     if (!resSent.ok) throw new Error(`Erreur ${resSent.status}`);
     const dataSent = await resSent.json();
+
     sentMessages.value = Array.isArray(dataSent) ? dataSent : [];
-    const currentEmail = dataSent[0]?.fromEmail;
-    originalAddress.value = currentEmail?.address || "Adresse inconnue";
-    editedAddress.value = currentEmail?.address || "";
-    userId.value = currentEmail?.userId || currentEmail?.user?.id || null;
+
+    let currentEmail = null;
+    if (
+      Array.isArray(dataSent) &&
+      dataSent.length > 0 &&
+      dataSent[0]?.fromEmail
+    ) {
+      currentEmail = dataSent[0].fromEmail;
+    }
+
+    if (currentEmail && currentEmail.address) {
+      originalAddress.value = currentEmail.address;
+      editedAddress.value = currentEmail.address;
+      userId.value = currentEmail.userId || currentEmail.user?.id || null;
+    } else {
+      originalAddress.value = "Adresse inconnue";
+      editedAddress.value = "";
+      userId.value = null;
+    }
 
     const resReceived = await fetch(
       `${BACKEND_URL}/messages/received_messages?id_email_address=${emailId}`
@@ -103,6 +127,39 @@ onMounted(async () => {
 async function updateEmail() {
   updateError.value = null;
   successMessage.value = null;
+
+  const trimmedAddress = editedAddress.value.trim();
+
+  if (!trimmedAddress) {
+    updateError.value = "L'adresse email ne peut pas être vide.";
+    return;
+  }
+
+  // Validation du format email avec ta regex
+  const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  if (!emailRegex.test(trimmedAddress)) {
+    updateError.value = "L'adresse email n'est pas valide.";
+    return;
+  }
+
+  // Vérification qu'il n'y ait pas de chiffre dans la partie domaine après le '@'
+  const domainPart = trimmedAddress.split("@")[1];
+  if (/\d/.test(domainPart)) {
+    updateError.value =
+      "La partie domaine de l'adresse email ne doit pas contenir de chiffre.";
+    return;
+  }
+
+  if (trimmedAddress === originalAddress.value) {
+    updateError.value = "L'adresse est identique à l'originale.";
+    return;
+  }
+
+  if (!userId.value) {
+    updateError.value = "Utilisateur introuvable pour cette adresse.";
+    return;
+  }
+
   updating.value = true;
 
   try {
@@ -110,25 +167,64 @@ async function updateEmail() {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        address: editedAddress.value,
+        address: trimmedAddress,
         userId: userId.value,
       }),
     });
 
     if (!res.ok) {
-      const errorData = await res.json();
+      let errorData;
+      try {
+        errorData = await res.json();
+      } catch {
+        errorData = null;
+      }
       throw new Error(
-        errorData.detail?.[0]?.msg || "Erreur lors de la mise à jour"
+        errorData?.detail?.[0]?.msg || "Erreur lors de la mise à jour"
       );
     }
 
-    const result = await res.json();
-    successMessage.value = `Adresse mise à jour : ${editedAddress.value}`;
-    originalAddress.value = editedAddress.value;
+    await reloadEmailAddress();
+
+    successMessage.value = `Adresse mise à jour avec succès.`;
   } catch (err) {
     updateError.value = err.message;
   } finally {
     updating.value = false;
+  }
+}
+
+// Fonction pour recharger l'adresse mail depuis le backend
+async function reloadEmailAddress() {
+  try {
+    const resSent = await fetch(
+      `${BACKEND_URL}/messages/sent_messages?id_email_address=${emailId}`
+    );
+    if (!resSent.ok) throw new Error(`Erreur ${resSent.status}`);
+
+    const dataSent = await resSent.json();
+    sentMessages.value = Array.isArray(dataSent) ? dataSent : [];
+
+    let currentEmail = null;
+    if (
+      Array.isArray(dataSent) &&
+      dataSent.length > 0 &&
+      dataSent[0]?.fromEmail
+    ) {
+      currentEmail = dataSent[0].fromEmail;
+    }
+
+    if (currentEmail && currentEmail.address) {
+      originalAddress.value = currentEmail.address;
+      editedAddress.value = currentEmail.address;
+      userId.value = currentEmail.userId || currentEmail.user?.id || null;
+    } else {
+      originalAddress.value = "Adresse inconnue";
+      editedAddress.value = "";
+      userId.value = null;
+    }
+  } catch (err) {
+    error.value = err.message;
   }
 }
 
