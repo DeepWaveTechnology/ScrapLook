@@ -6,11 +6,11 @@ from typing import Annotated, Optional
 from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
 from jose import jwt, JWTError
-from prisma import Prisma, errors
 from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from models.user import Token, UserOutput
+from prisma import Prisma, errors
 from prisma.models import User
 from services.user_services import get_user_by_name
 from config.app_config import get_app_config
@@ -32,7 +32,7 @@ APP_CONFIG = get_app_config()
 
 
 # === Fonctions auxiliaires ===
-def verify_password(plain_password, hashed_password) -> bool:
+def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
     Check password is equivalent to a hashed password.
 
