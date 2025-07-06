@@ -104,6 +104,7 @@ Se positionner dans le répertoire **ScrapLook\scraplook-backend**.
 
 ```bash
 venv_init_scripts/env_build.bat
+.\.venv\Scripts\activate
 prisma db push
 pdm dev #pdm prod ==> pour la production (configuration à éditer dans le fichier 'pyproject.toml')
 ```

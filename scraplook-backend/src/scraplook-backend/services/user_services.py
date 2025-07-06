@@ -4,7 +4,7 @@ from prisma.models import User
 
 
 async def get_all_users(prisma: Prisma) -> list[User]:
-    return await prisma.user.find_many(include={"emails": True})
+    return await prisma.user.find_many()
 
 
 async def get_user_by_id(prisma: Prisma, id_user: str) -> User:
