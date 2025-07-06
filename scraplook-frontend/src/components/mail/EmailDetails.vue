@@ -46,8 +46,8 @@
         {{ updateError }}
       </Message>
 
-      <EmailDetailsSent :messages="sentMessages" />
-      <EmailDetailsReceived :messages="receivedMessages" />
+      <EmailDetailsSent :messages="sentMessages" :idEmailAddress="emailId" />
+      <EmailDetailsReceived :messages="receivedMessages" :idEmailAddress="emailId" />
     </div>
   </div>
 </template>
