@@ -9,7 +9,9 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Card: typeof import('primevue/card')['default']
+    DataView: typeof import('primevue/dataview')['default']
     Divider: typeof import('primevue/divider')['default']
+    EmailDetails: typeof import('./src/components/mail/EmailDetails.vue')['default']
     Header: typeof import('./src/components/Header.vue')['default']
     Message: typeof import('primevue/message')['default']
     ProgressSpinner: typeof import('primevue/progressspinner')['default']

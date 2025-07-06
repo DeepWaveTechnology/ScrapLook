@@ -50,7 +50,13 @@
                 class="list-disc list-inside text-purple-800 space-y-1 max-w-md"
               >
                 <li v-for="email in user.emails" :key="email.id">
-                  {{ email.address }}
+                  <RouterLink
+                    :to="`/email/${email.id}`"
+                    class="text-pink-600 hover:underline cursor-pointer"
+                    title="Voir l’email"
+                  >
+                    {{ email.address }}
+                  </RouterLink>
                 </li>
               </ul>
               <Divider />
@@ -64,9 +70,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import DataView from "primevue/dataview";
-import ProgressSpinner from "primevue/progressspinner";
-import Message from "primevue/message";
+import { RouterLink } from "vue-router";
 
 const users = ref([]);
 const loading = ref(true);
