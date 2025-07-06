@@ -81,6 +81,14 @@ onMounted(async () => {
     const res = await fetch("http://127.0.0.1:8000/user/all");
     if (!res.ok) throw new Error(`Erreur ${res.status}`);
     users.value = await res.json();
+    console.log("Utilisateurs récupérés:", users.value);
+
+    // get emails for each user
+    for (const user of users.value) {
+      const emailRes = await fetch(`http://127.0.0.1:8000/email_address/all?user_id=${user.id}`);
+      if (!emailRes.ok) throw new Error(`Erreur ${emailRes.status}`);
+      user.emails = await emailRes.json();
+    }
   } catch (err) {
     error.value = err.message;
   } finally {
