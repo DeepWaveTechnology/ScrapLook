@@ -68,7 +68,11 @@
               <ul
                 class="list-disc list-inside text-purple-800 space-y-1 max-w-md ml-2"
               >
-                <li v-for="email in user.emails" :key="email.id">
+                <li
+                  v-for="email in user.emails"
+                  :key="email.id"
+                  class="flex items-center gap-4"
+                >
                   <RouterLink
                     :to="`/email/${email.id}`"
                     class="text-pink-600 hover:underline cursor-pointer"
@@ -76,6 +80,12 @@
                   >
                     {{ email.address }}
                   </RouterLink>
+                  <Button
+                    icon="pi pi-trash"
+                    class="p-button-sm p-button-danger"
+                    @click="deleteEmail(email.id, user.id)"
+                    title="Supprimer l'email"
+                  />
                 </li>
               </ul>
 
@@ -127,4 +137,25 @@ function getLastName(fullName) {
   const parts = fullName.trim().split(" ");
   return parts.length > 1 ? parts.slice(1).join(" ") : "";
 }
+
+async function deleteEmail(emailId, userId) {
+  const confirmed = confirm("Voulez-vous vraiment supprimer cette adresse email ?");
+  if (!confirmed) return;
+
+  try {
+    const res = await fetch(`http://127.0.0.1:8000/email_address/${emailId}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) throw new Error(`Erreur ${res.status}`);
+
+    // Retirer l’email supprimé de la liste
+    const user = users.value.find((u) => u.id === userId);
+    if (user) {
+      user.emails = user.emails.filter((e) => e.id !== emailId);
+    }
+  } catch (err) {
+    alert("Erreur lors de la suppression : " + err.message);
+  }
+}
+
 </script>

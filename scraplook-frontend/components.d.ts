@@ -18,6 +18,7 @@ declare module 'vue' {
     EmailDetailsReceived: typeof import('./src/components/mail/EmailDetailsReceived.vue')['default']
     EmailDetailsSent: typeof import('./src/components/mail/EmailDetailsSent.vue')['default']
     Header: typeof import('./src/components/Header.vue')['default']
+    InputText: typeof import('primevue/inputtext')['default']
     Message: typeof import('primevue/message')['default']
     ProgressSpinner: typeof import('primevue/progressspinner')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

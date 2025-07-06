@@ -14,8 +14,32 @@
 
     <div v-else>
       <p class="text-lg text-purple-700 mb-4">
-        Adresse email : <strong>{{ address || 'Inconnue' }}</strong>
+        Adresse email actuelle :
+        <strong>{{ originalAddress || 'Inconnue' }}</strong>
       </p>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Modifier l'adresse email :
+        </label>
+        <InputText v-model="editedAddress" class="w-full max-w-md" />
+      </div>
+
+      <Button
+        label="Mettre à jour"
+        icon="pi pi-save"
+        class="bg-purple-600 hover:bg-purple-700 text-white mb-6"
+        @click="updateEmail"
+        :loading="updating"
+      />
+
+      <Message v-if="successMessage" severity="success" class="mb-4">
+        {{ successMessage }}
+      </Message>
+
+      <Message v-if="updateError" severity="error" class="mb-4">
+        {{ updateError }}
+      </Message>
 
       <EmailDetailsSent :messages="sentMessages" />
       <EmailDetailsReceived :messages="receivedMessages" />
@@ -26,19 +50,22 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import ProgressSpinner from "primevue/progressspinner";
-import Message from "primevue/message";
 import EmailDetailsSent from "./EmailDetailsSent.vue";
 import EmailDetailsReceived from "./EmailDetailsReceived.vue";
 
 const route = useRoute();
 const emailId = route.params.emailId;
 
-const address = ref("Adresse inconnue");
+const originalAddress = ref("Adresse inconnue");
+const editedAddress = ref("");
 const sentMessages = ref([]);
 const receivedMessages = ref([]);
 const loading = ref(true);
+const updating = ref(false);
 const error = ref(null);
+const updateError = ref(null);
+const successMessage = ref(null);
+const userId = ref(null); // pour PATCH
 
 onMounted(async () => {
   try {
@@ -48,7 +75,10 @@ onMounted(async () => {
     if (!resSent.ok) throw new Error(`Erreur ${resSent.status}`);
     const dataSent = await resSent.json();
     sentMessages.value = Array.isArray(dataSent) ? dataSent : [];
-    address.value = dataSent[0]?.fromEmail?.address || "Adresse inconnue";
+    const currentEmail = dataSent[0]?.fromEmail;
+    originalAddress.value = currentEmail?.address || "Adresse inconnue";
+    editedAddress.value = currentEmail?.address || "";
+    userId.value = currentEmail?.userId || currentEmail?.user?.id || null;
 
     const resReceived = await fetch(
       `http://127.0.0.1:8000/messages/received_messages?id_email_address=${emailId}`
@@ -62,4 +92,34 @@ onMounted(async () => {
     loading.value = false;
   }
 });
+
+async function updateEmail() {
+  updateError.value = null;
+  successMessage.value = null;
+  updating.value = true;
+
+  try {
+    const res = await fetch(`http://127.0.0.1:8000/email_address/${emailId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        address: editedAddress.value,
+        userId: userId.value,
+      }),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.detail?.[0]?.msg || "Erreur lors de la mise à jour");
+    }
+
+    const result = await res.json();
+    successMessage.value = `Adresse mise à jour : ${editedAddress.value}`;
+    originalAddress.value = editedAddress.value;
+  } catch (err) {
+    updateError.value = err.message;
+  } finally {
+    updating.value = false;
+  }
+}
 </script>
