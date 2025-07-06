@@ -1,8 +1,6 @@
 <template>
   <div class="p-6 max-w-4xl mx-auto">
-    <h1 class="text-3xl font-bold mb-6">
-      Détails de l'adresse email
-    </h1>
+    <h1 class="text-3xl font-bold mb-6">Détails de l'adresse email</h1>
 
     <div v-if="loading" class="flex justify-center mt-12">
       <ProgressSpinner style="width: 60px; height: 60px" />
@@ -15,7 +13,7 @@
     <div v-else>
       <p class="text-lg text-purple-700 mb-4">
         Adresse email actuelle :
-        <strong>{{ originalAddress || 'Inconnue' }}</strong>
+        <strong>{{ originalAddress || "Inconnue" }}</strong>
       </p>
 
       <div class="mb-4">
@@ -31,6 +29,13 @@
         class="bg-purple-600 hover:bg-purple-700 text-white mb-6"
         @click="updateEmail"
         :loading="updating"
+      />
+
+      <Button
+        label="Envoyer un message"
+        icon="pi pi-send"
+        class="ml-4 bg-blue-600 hover:bg-blue-700 text-white mb-6"
+        @click="goToSendMessage"
       />
 
       <Message v-if="successMessage" severity="success" class="mb-4">
@@ -49,11 +54,12 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import EmailDetailsSent from "./EmailDetailsSent.vue";
 import EmailDetailsReceived from "./EmailDetailsReceived.vue";
 
 const route = useRoute();
+const router = useRouter();
 const emailId = route.params.emailId;
 
 const originalAddress = ref("Adresse inconnue");
@@ -110,7 +116,9 @@ async function updateEmail() {
 
     if (!res.ok) {
       const errorData = await res.json();
-      throw new Error(errorData.detail?.[0]?.msg || "Erreur lors de la mise à jour");
+      throw new Error(
+        errorData.detail?.[0]?.msg || "Erreur lors de la mise à jour"
+      );
     }
 
     const result = await res.json();
@@ -121,5 +129,9 @@ async function updateEmail() {
   } finally {
     updating.value = false;
   }
+}
+
+function goToSendMessage() {
+  router.push(`/message/send/${emailId}`);
 }
 </script>
