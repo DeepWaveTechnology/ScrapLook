@@ -12,6 +12,8 @@ declare module 'vue' {
     DataView: typeof import('primevue/dataview')['default']
     Divider: typeof import('primevue/divider')['default']
     EmailDetails: typeof import('./src/components/mail/EmailDetails.vue')['default']
+    EmailDetailsReceived: typeof import('./src/components/mail/EmailDetailsReceived.vue')['default']
+    EmailDetailsSent: typeof import('./src/components/mail/EmailDetailsSent.vue')['default']
     Header: typeof import('./src/components/Header.vue')['default']
     Message: typeof import('primevue/message')['default']
     ProgressSpinner: typeof import('primevue/progressspinner')['default']
