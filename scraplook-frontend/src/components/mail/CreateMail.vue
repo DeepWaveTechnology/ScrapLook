@@ -27,11 +27,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
+import { BACKEND_URL } from "@/config";
 
 const route = useRoute()
 const userId = route.params.userId
@@ -49,9 +50,9 @@ async function submitForm() {
   loading.value = true
   successMessage.value = ''
   errorMessage.value = ''
-
+  
   try {
-    const response = await fetch('http://127.0.0.1:8000/email_address/', {
+    const response = await fetch(`${BACKEND_URL}/email_address/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form.value),

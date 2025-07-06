@@ -63,6 +63,7 @@
 
 <script setup>
 import { ref, watch } from "vue";
+import { BACKEND_URL } from "@/config";
 
 const props = defineProps({
   messages: {
@@ -98,7 +99,7 @@ async function deleteMessage(messageId) {
       id_message: messageId,
     });
 
-    const res = await fetch(`http://127.0.0.1:8000/messages/?${params.toString()}`, {
+    const res = await fetch(`${BACKEND_URL}/messages/?${params.toString()}`, {
       method: "DELETE",
     });
 

@@ -111,12 +111,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import ProgressSpinner from "primevue/progressspinner";
-import Message from "primevue/message";
-import InputText from "primevue/inputtext";
-import Textarea from "primevue/textarea";
-import MultiSelect from "primevue/multiselect";
-import Button from "primevue/button";
+import { BACKEND_URL } from "@/config";
 
 const route = useRoute();
 const router = useRouter();
@@ -134,14 +129,14 @@ const successMessage = ref(null);
 
 onMounted(async () => {
   try {
-    const res = await fetch("http://127.0.0.1:8000/user/all");
+    const res = await fetch(`${BACKEND_URL}/user/all`);
     if (!res.ok) throw new Error(`Erreur ${res.status}`);
     const users = await res.json();
 
     // Pour chaque user, récupérer les emails
     for (const user of users) {
       const emailRes = await fetch(
-        `http://127.0.0.1:8000/email_address/all?user_id=${user.id}`
+        `${BACKEND_URL}/email_address/all?user_id=${user.id}`
       );
       if (!emailRes.ok) throw new Error(`Erreur ${emailRes.status}`);
       user.emails = await emailRes.json();
@@ -173,7 +168,7 @@ async function sendMessage() {
   sending.value = true;
 
   try {
-    const res = await fetch("http://127.0.0.1:8000/messages/", {
+    const res = await fetch(`${BACKEND_URL}/messages/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

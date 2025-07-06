@@ -101,6 +101,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { RouterLink } from "vue-router";
+import { BACKEND_URL } from "@/config";
 
 const users = ref([]);
 const loading = ref(true);
@@ -108,13 +109,13 @@ const error = ref(null);
 
 onMounted(async () => {
   try {
-    const res = await fetch("http://127.0.0.1:8000/user/all");
+    const res = await fetch(`${BACKEND_URL}/user/all`);
     if (!res.ok) throw new Error(`Erreur ${res.status}`);
     users.value = await res.json();
 
     for (const user of users.value) {
       const emailRes = await fetch(
-        `http://127.0.0.1:8000/email_address/all?user_id=${user.id}`
+        `${BACKEND_URL}/email_address/all?user_id=${user.id}`
       );
       if (!emailRes.ok) throw new Error(`Erreur ${emailRes.status}`);
       user.emails = await emailRes.json();
@@ -143,7 +144,7 @@ async function deleteEmail(emailId, userId) {
   if (!confirmed) return;
 
   try {
-    const res = await fetch(`http://127.0.0.1:8000/email_address/${emailId}`, {
+    const res = await fetch(`${BACKEND_URL}/email_address/${emailId}`, {
       method: "DELETE",
     });
     if (!res.ok) throw new Error(`Erreur ${res.status}`);

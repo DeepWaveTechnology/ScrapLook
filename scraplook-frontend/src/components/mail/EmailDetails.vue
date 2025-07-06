@@ -57,6 +57,7 @@ import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import EmailDetailsSent from "./EmailDetailsSent.vue";
 import EmailDetailsReceived from "./EmailDetailsReceived.vue";
+import { BACKEND_URL } from "@/config";
 
 const route = useRoute();
 const router = useRouter();
@@ -76,7 +77,7 @@ const userId = ref(null); // pour PATCH
 onMounted(async () => {
   try {
     const resSent = await fetch(
-      `http://127.0.0.1:8000/messages/sent_messages?id_email_address=${emailId}`
+      `${BACKEND_URL}/messages/sent_messages?id_email_address=${emailId}`
     );
     if (!resSent.ok) throw new Error(`Erreur ${resSent.status}`);
     const dataSent = await resSent.json();
@@ -87,7 +88,7 @@ onMounted(async () => {
     userId.value = currentEmail?.userId || currentEmail?.user?.id || null;
 
     const resReceived = await fetch(
-      `http://127.0.0.1:8000/messages/received_messages?id_email_address=${emailId}`
+      `${BACKEND_URL}/messages/received_messages?id_email_address=${emailId}`
     );
     if (!resReceived.ok) throw new Error(`Erreur ${resReceived.status}`);
     const dataReceived = await resReceived.json();
@@ -105,7 +106,7 @@ async function updateEmail() {
   updating.value = true;
 
   try {
-    const res = await fetch(`http://127.0.0.1:8000/email_address/${emailId}`, {
+    const res = await fetch(`${BACKEND_URL}/email_address/${emailId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

@@ -34,10 +34,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import InputText from 'primevue/inputtext'
-import Password from 'primevue/password'
-import Button from 'primevue/button'
-import Message from 'primevue/message'
+import { BACKEND_URL } from "@/config";
 
 const form = ref({
   name: '',
@@ -55,7 +52,7 @@ async function submitForm() {
   errorMessage.value = ''
 
   try {
-    const response = await fetch('http://127.0.0.1:8000/user/', {
+    const response = await fetch(`${BACKEND_URL}/user/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form.value),
