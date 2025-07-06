@@ -1,32 +1,51 @@
 <template>
   <div>
-    <h2 class="text-2xl font-semibold mb-4 mt-8">Messages reçus</h2>
-    <div v-if="messages.length === 0" class="text-gray-500">
-      Aucun message reçu.
-    </div>
+    <h2 class="text-3xl font-bold text-purple-800 mb-6 mt-8 flex items-center gap-2">
+      <i class="pi pi-inbox text-xl" /> Messages reçus
+    </h2>
+
+    <Message v-if="messages.length === 0" severity="info" class="mb-4">
+      Aucun message reçu pour cette adresse.
+    </Message>
 
     <div v-else class="space-y-6">
-      <div
+      <Card
         v-for="message in messages"
         :key="message.id"
-        class="p-4 border border-gray-300 rounded-md bg-white shadow-sm"
+        class="shadow-md border border-gray-200"
       >
-        <h3 class="text-xl font-semibold mb-2">{{ message.subject }}</h3>
-        <p class="mb-1 text-sm text-gray-600">
-          <strong>Reçu le :</strong> {{ formatDate(message.sentAt) }}
-        </p>
-        <div class="whitespace-pre-line mb-2">{{ message.body }}</div>
+        <template #title>
+          <div class="flex items-center justify-between">
+            <span class="text-xl font-semibold text-gray-800">{{ message.subject }}</span>
+            <Tag value="Reçu" severity="info" />
+          </div>
+        </template>
 
-        <h4 class="font-semibold text-sm">Expéditeur :</h4>
-        <p class="text-sm text-gray-700">
-          {{ message.fromEmail?.address || "Adresse inconnue" }}
-        </p>
-      </div>
+        <template #content>
+          <p class="text-sm text-gray-600 mb-2">
+            <i class="pi pi-calendar mr-2" />
+            <strong>Reçu le :</strong> {{ formatDate(message.sentAt) }}
+          </p>
+
+          <Divider class="my-2" />
+
+          <div class="text-gray-800 whitespace-pre-line mb-4">
+            {{ message.body }}
+          </div>
+
+          <p class="text-sm text-gray-700">
+            <i class="pi pi-user mr-2" />
+            <strong>Expéditeur :</strong>
+            {{ message.fromEmail?.address || "Adresse inconnue" }}
+          </p>
+        </template>
+      </Card>
     </div>
   </div>
 </template>
 
 <script setup>
+
 defineProps({
   messages: {
     type: Array,
