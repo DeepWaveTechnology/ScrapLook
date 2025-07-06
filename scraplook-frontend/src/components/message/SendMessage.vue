@@ -22,9 +22,7 @@
         <tbody>
           <!-- Sujet -->
           <tr class="bg-indigo-50 border-b border-indigo-200">
-            <td class="py-4 px-6 font-semibold text-indigo-700 w-36">
-              Sujet (optionnel)
-            </td>
+            <td class="py-4 px-6 font-semibold text-indigo-700 w-36">Sujet (optionnel)</td>
             <td class="py-4 px-6">
               <InputText
                 id="subject"
@@ -61,10 +59,9 @@
               <MultiSelect
                 v-model="selectedRecipients"
                 :options="allEmails"
-                optionLabel="address"
-                optionValue="id"
+                optionLabel="label"
+                optionValue="value"
                 filter
-                filterBy="address"
                 placeholder="Choisir des destinataires"
                 display="chip"
                 class="w-full"
@@ -107,14 +104,12 @@
   </div>
 </template>
 
-
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { BACKEND_URL } from "@/config";
 
 const route = useRoute();
-const router = useRouter();
 const fromId = route.params.id_address_mail;
 
 const subject = ref("");
@@ -133,17 +128,23 @@ onMounted(async () => {
     if (!res.ok) throw new Error(`Erreur ${res.status}`);
     const users = await res.json();
 
-    // Pour chaque user, récupérer les emails
+    // Charger les adresses email par utilisateur
     for (const user of users) {
-      const emailRes = await fetch(
-        `${BACKEND_URL}/email_address/all?user_id=${user.id}`
-      );
+      const emailRes = await fetch(`${BACKEND_URL}/email_address/all?user_id=${user.id}`);
       if (!emailRes.ok) throw new Error(`Erreur ${emailRes.status}`);
       user.emails = await emailRes.json();
     }
 
-    // Extraire tous les emails dans un tableau plat
-    allEmails.value = users.flatMap(user => user.emails || []);
+    // Construire les options pour MultiSelect avec emailId + type
+    allEmails.value = users.flatMap((user) =>
+      (user.emails || []).map((email) => ({
+        label: email.address,
+        value: {
+          emailId: email.id,
+          type: "TO", // Tu peux adapter ici selon besoin : "TO", "CC", etc.
+        },
+      }))
+    );
   } catch (err) {
     error.value = err.message;
   } finally {
@@ -168,15 +169,19 @@ async function sendMessage() {
   sending.value = true;
 
   try {
+    const payload = {
+      subject: subject.value || null,
+      body: body.value,
+      fromId: fromId,
+      recipients: selectedRecipients.value, // Contient [{ emailId, type }]
+    };
+
+    console.log("Payload envoyé :", JSON.stringify(payload, null, 2));
+
     const res = await fetch(`${BACKEND_URL}/messages/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        subject: subject.value || null,
-        body: body.value,
-        fromId: fromId,
-        recipients: selectedRecipients.value.map(id => ({ id })),
-      }),
+      body: JSON.stringify(payload),
     });
 
     if (res.status !== 201) {
