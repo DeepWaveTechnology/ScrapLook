@@ -47,8 +47,9 @@ async def get_user_messages_received(
     """
     return await prisma.message.find_many(
         where={
-            "recipients": {"some": {"emailId": id_email_address}},
-            "deleted_by_receiver": False,
+            "recipients": {
+                "some": {"emailId": id_email_address, "deletes_message": False}
+            },
         },
         include={
             "recipients": {
@@ -108,7 +109,7 @@ async def send_message(prisma: Prisma, message_info: MessageInput) -> None:
     )
 
 
-async def delete_message(
+async def safe_delete_message(
     prisma: Prisma, id_email_address: str, id_message: str
 ) -> None:
     """
@@ -137,6 +138,42 @@ async def delete_message(
             where={"id": id_message}, data={"deleted_by_sender": True}
         )
     else:
-        await prisma.message.update(
-            where={"id": id_message}, data={"deleted_by_receiver": True}
+        await prisma.messagerecipient.update(
+            where={
+                "messageId_emailId": {
+                    "messageId": id_message,
+                    "emailId": id_email_address,
+                }
+            },
+            data={"deletes_message": True},
         )
+
+    # try to delete this message
+    await delete_message(prisma=prisma, id_message=id_message)
+
+
+async def delete_message(prisma: Prisma, id_message: str) -> None:
+    """
+    Delete completely message from given email address in DB.
+
+    The message is deleted only if sender and all recipients delete the message.
+
+    Args:
+        prisma: DB connection.
+        id_message: Message ID to delete.
+
+    Returns:
+
+    """
+    # retrieve message information
+    try:
+        message = await get_user_message(prisma, id_message)
+    except errors.RecordNotFoundError:
+        # message to delete doesn't exist, so return
+        return
+
+    # if all users deleted this message, delete the message on db
+    if message.deleted_by_sender and all(
+        recipient.deletes_message for recipient in message.recipients
+    ):
+        await prisma.message.delete(where={"id": message.id})

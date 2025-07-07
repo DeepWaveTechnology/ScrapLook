@@ -47,7 +47,7 @@ def create_logger(config_file_path: str, logger_name: str) -> Logger:
     dictConfig(logger_config)
 
     # return logger if exists
-    if logger_name in root.manager.loggerDict: #pylint: disable=E1101
+    if logger_name in root.manager.loggerDict:  # pylint: disable=E1101
         return getLogger(logger_name)
 
     raise LoggerNotFound(f"Logger {logger_name} not found")

@@ -5,6 +5,11 @@ Service module to manage users email addresses.
 from models.email_address import EmailAddressInput
 from prisma import Prisma
 from prisma.models import Email
+from services.messages_services import (
+    get_user_messages_sent,
+    get_user_messages_received,
+    safe_delete_message,
+)
 
 
 async def get_user_email_addresses(prisma: Prisma, id_user: str) -> list[Email]:
@@ -74,4 +79,20 @@ async def delete_email_address(prisma: Prisma, id_email_address: str) -> None:
     Returns:
 
     """
+    # retrieve messages sent and received for this email address
+    messages_to_delete = await get_user_messages_sent(
+        prisma=prisma, id_email_address=id_email_address
+    )
+    messages_to_delete.extend(
+        await get_user_messages_received(
+            prisma=prisma, id_email_address=id_email_address
+        )
+    )
+
+    # delete all messages
+    for message in messages_to_delete:
+        await safe_delete_message(
+            prisma=prisma, id_email_address=id_email_address, id_message=message.id
+        )
+
     await prisma.email.delete(where={"id": id_email_address})

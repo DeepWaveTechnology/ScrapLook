@@ -12,6 +12,7 @@ from services.email_address_services import (
     add_email_address,
     delete_email_address,
     update_email_address,
+    get_email_address_information,
 )
 from config.app_config import get_app_config
 from config.prisma_client import get_prisma_instance
@@ -35,6 +36,29 @@ async def get_all(
         list[Email]: Email addresses of the user.
     """
     return await get_user_email_addresses(prisma, user_id)
+
+
+@router.get("/{id_email_address}", status_code=status.HTTP_200_OK, response_model=Email)
+async def get_one(
+    id_email_address: str, prisma: Prisma = Depends(get_prisma_instance)
+) -> Email:
+    """
+    Endpoint to get an email.
+
+    Args:
+        id_email_address: Email address ID.
+        prisma: DB connection.
+
+    Returns:
+        Email: Email address of the user.
+    """
+    try:
+        return await get_email_address_information(prisma, id_email_address)
+    except errors.RecordNotFoundError as error:
+        APP_CONFIG.logger.warning("Email address not found: %s", error)
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Email address not found"
+        ) from error
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
