@@ -28,6 +28,7 @@ distribution = true
 
 [tool.pdm.scripts]
 dev = "fastapi dev src/scraplook-backend/main.py"
+prisma = "prisma studio"
 prod = "fastapi run src/scraplook-backend/main.py --host 127.0.0.1 --port 5000"
 pylint = "pylint --rcfile config/.pylintrc --enable-all-extensions src/scraplook-backend/"
 black = "black --config pyproject.toml src/scraplook-backend"

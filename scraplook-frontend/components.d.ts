@@ -8,13 +8,29 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Button: typeof import('primevue/button')['default']
     Card: typeof import('primevue/card')['default']
+    CreateMail: typeof import('./src/components/mail/CreateMail.vue')['default']
+    CreateUser: typeof import('./src/components/user/CreateUser.vue')['default']
+    DataView: typeof import('primevue/dataview')['default']
     Divider: typeof import('primevue/divider')['default']
+    EmailDetails: typeof import('./src/components/mail/EmailDetails.vue')['default']
+    EmailDetailsReceived: typeof import('./src/components/mail/EmailDetailsReceived.vue')['default']
+    EmailDetailsSent: typeof import('./src/components/mail/EmailDetailsSent.vue')['default']
     Header: typeof import('./src/components/Header.vue')['default']
+    Home: typeof import('./src/components/Home.vue')['default']
+    InputText: typeof import('primevue/inputtext')['default']
+    Main: typeof import('./src/components/Main.vue')['default']
     Message: typeof import('primevue/message')['default']
+    MultiSelect: typeof import('primevue/multiselect')['default']
+    Password: typeof import('primevue/password')['default']
     ProgressSpinner: typeof import('primevue/progressspinner')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SendMessage: typeof import('./src/components/message/SendMessage.vue')['default']
+    SentMessage: typeof import('./src/components/message/SentMessage.vue')['default']
+    Tag: typeof import('primevue/tag')['default']
+    Textarea: typeof import('primevue/textarea')['default']
     ViewUsers: typeof import('./src/components/user/ViewUsers.vue')['default']
   }
 }

@@ -1,10 +1,19 @@
 <template>
   <div class="p-6 max-w-7xl mx-auto">
-    <h2
-      class="text-3xl font-extrabold mb-8 bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 bg-clip-text text-transparent"
-    >
-      Liste des utilisateurs
-    </h2>
+    <div class="flex justify-between items-center mb-8">
+      <h2
+        class="text-3xl font-extrabold bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 bg-clip-text text-transparent"
+      >
+        Liste des utilisateurs
+      </h2>
+      <RouterLink to="/create/user">
+        <Button
+          icon="pi pi-user-plus"
+          label="Ajouter un utilisateur"
+          class="p-button-sm p-button-success"
+        />
+      </RouterLink>
+    </div>
 
     <div v-if="loading" class="flex justify-center mt-12">
       <ProgressSpinner
@@ -36,23 +45,50 @@
         <template #list="{ items }">
           <div>
             <div
-              v-for="(user, index) in items"
+              v-for="user in items"
               :key="user.id"
               class="p-6 border-b border-gray-300 last:border-none"
             >
-              <div class="text-xl font-semibold text-purple-900 mb-2">
-                <span>{{ getFirstName(user.name) }}</span>
-                <span class="ml-2 font-normal text-purple-700">{{
-                  getLastName(user.name)
-                }}</span>
+              <div class="flex justify-between items-start mb-2">
+                <div class="text-xl font-semibold text-purple-900">
+                  <span>{{ getFirstName(user.name) }}</span>
+                  <span class="ml-2 font-normal text-purple-700">
+                    {{ getLastName(user.name) }}
+                  </span>
+                </div>
+                <RouterLink :to="`/create/mail${user.id}`">
+                  <Button
+                    icon="pi pi-envelope"
+                    label="Ajouter un email"
+                    class="p-button-sm p-button-secondary"
+                  />
+                </RouterLink>
               </div>
+
               <ul
-                class="list-disc list-inside text-purple-800 space-y-1 max-w-md"
+                class="list-disc list-inside text-purple-800 space-y-1 max-w-md ml-2"
               >
-                <li v-for="email in user.emails" :key="email.id">
-                  {{ email.address }}
+                <li
+                  v-for="email in user.emails"
+                  :key="email.id"
+                  class="flex items-center gap-4"
+                >
+                  <RouterLink
+                    :to="`/email/${email.id}`"
+                    class="text-pink-600 hover:underline cursor-pointer"
+                    title="Voir l’email"
+                  >
+                    {{ email.address }}
+                  </RouterLink>
+                  <Button
+                    icon="pi pi-trash"
+                    class="p-button-sm p-button-danger"
+                    @click="deleteEmail(email.id, user.id)"
+                    title="Supprimer l'email"
+                  />
                 </li>
               </ul>
+
               <Divider />
             </div>
           </div>
@@ -64,9 +100,8 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import DataView from "primevue/dataview";
-import ProgressSpinner from "primevue/progressspinner";
-import Message from "primevue/message";
+import { RouterLink } from "vue-router";
+import { BACKEND_URL } from "@/config";
 
 const users = ref([]);
 const loading = ref(true);
@@ -74,9 +109,17 @@ const error = ref(null);
 
 onMounted(async () => {
   try {
-    const res = await fetch("http://127.0.0.1:8000/user/all");
+    const res = await fetch(`${BACKEND_URL}/user/all`);
     if (!res.ok) throw new Error(`Erreur ${res.status}`);
     users.value = await res.json();
+
+    for (const user of users.value) {
+      const emailRes = await fetch(
+        `${BACKEND_URL}/email_address/all?user_id=${user.id}`
+      );
+      if (!emailRes.ok) throw new Error(`Erreur ${emailRes.status}`);
+      user.emails = await emailRes.json();
+    }
   } catch (err) {
     error.value = err.message;
   } finally {
@@ -95,4 +138,25 @@ function getLastName(fullName) {
   const parts = fullName.trim().split(" ");
   return parts.length > 1 ? parts.slice(1).join(" ") : "";
 }
+
+async function deleteEmail(emailId, userId) {
+  const confirmed = confirm("Voulez-vous vraiment supprimer cette adresse email ?");
+  if (!confirmed) return;
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/email_address/${emailId}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) throw new Error(`Erreur ${res.status}`);
+
+    // Retirer l’email supprimé de la liste
+    const user = users.value.find((u) => u.id === userId);
+    if (user) {
+      user.emails = user.emails.filter((e) => e.id !== emailId);
+    }
+  } catch (err) {
+    alert("Erreur lors de la suppression : " + err.message);
+  }
+}
+
 </script>

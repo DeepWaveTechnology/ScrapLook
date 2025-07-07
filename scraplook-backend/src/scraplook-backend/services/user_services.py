@@ -8,6 +8,7 @@ from prisma.models import User
 
 
 async def get_all_users(prisma: Prisma) -> list[User]:
+
     """
     Retrieve all users from DB.
 
