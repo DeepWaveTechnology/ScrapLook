@@ -14,7 +14,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 @router.get("/populate", status_code=status.HTTP_201_CREATED)
-async def populate_app_data() -> None:
+async def populate_app_data() -> dict[str, str]:
     """
     Endpoint to populate database with new data.
 
@@ -28,9 +28,11 @@ async def populate_app_data() -> None:
     await email_addresses_seeder(prisma)
     await email_messages(prisma)
 
+    return {"message": "Database feeded successfully"}
+
 
 @router.get("/user", status_code=status.HTTP_201_CREATED)
-async def user_seeder(prisma: Prisma = Depends(get_prisma_instance)) -> None:
+async def user_seeder(prisma: Prisma = Depends(get_prisma_instance)) -> dict[str, str]:
     """
     Endpoint to add new users in DB.
 
@@ -43,6 +45,16 @@ async def user_seeder(prisma: Prisma = Depends(get_prisma_instance)) -> None:
     users_data = [
         {"name": "AntoninD", "password": "azerty"},
         {"name": "Alice", "password": "alice123"},
+        {"name": "Jean", "password": "jean456"},
+        {"name": "Clara", "password": "clara789"},
+        {"name": "Lucas", "password": "lucas321"},
+        {"name": "Emma", "password": "emma2024"},
+        {"name": "Thomas", "password": "thomas007"},
+        {"name": "Lea", "password": "lea_pass"},
+        {"name": "Noah", "password": "noah2025"},
+        {"name": "Sophie", "password": "s0phiepwd"},
+        {"name": "Hugo", "password": "hugo1234"},
+        {"name": "Mia", "password": "miamiami"},
     ]
 
     for user_data in users_data:
@@ -51,9 +63,13 @@ async def user_seeder(prisma: Prisma = Depends(get_prisma_instance)) -> None:
             data={"name": user_data["name"], "password": hashed_password}
         )
 
+    return {"message": "Users added successfully"}
+
 
 @router.get("/email_addresses", status_code=status.HTTP_201_CREATED)
-async def email_addresses_seeder(prisma: Prisma = Depends(get_prisma_instance)) -> None:
+async def email_addresses_seeder(
+    prisma: Prisma = Depends(get_prisma_instance),
+) -> dict[str, str]:
     """
     Endpoint to add new email addresses in DB.
 
@@ -71,9 +87,13 @@ async def email_addresses_seeder(prisma: Prisma = Depends(get_prisma_instance)) 
             data={"address": f"{user_data.name}.test@gmail.com", "userId": user_data.id}
         )
 
+    return {"message": "Email addresses added successfully"}
+
 
 @router.get("/email_messages", status_code=status.HTTP_201_CREATED)
-async def email_messages(prisma: Prisma = Depends(get_prisma_instance)) -> None:
+async def email_messages(
+    prisma: Prisma = Depends(get_prisma_instance),
+) -> dict[str, str]:
     """
     Endpoint to add new email messages in DB.
 
@@ -104,6 +124,8 @@ async def email_messages(prisma: Prisma = Depends(get_prisma_instance)) -> None:
                 },
             }
         )
+
+    return {"message": "Messages added successfully"}
 
 
 @router.get("/reset", status_code=status.HTTP_200_OK)

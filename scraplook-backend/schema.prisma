@@ -45,18 +45,21 @@ model Message {
   fromId    String
 
   deleted_by_sender   Boolean @default(false)
-  deleted_by_receiver Boolean @default(false)
 
   recipients MessageRecipient[]
 }
 
 model MessageRecipient {
   id        String  @id @default(uuid())
-  message   Message @relation(fields: [messageId], references: [id])
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
   messageId String
 
   email   Email  @relation(fields: [emailId], references: [id])
   emailId String
 
+  deletes_message   Boolean @default(false)
+
   type String
+
+   @@unique([messageId, emailId])
 }

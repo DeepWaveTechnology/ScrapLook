@@ -21,27 +21,14 @@
         <label class="block text-sm font-medium text-gray-700 mb-1">
           Modifier l'adresse email :
         </label>
-        <InputText
-          v-model="editedAddress"
-          class="w-full max-w-md"
-          @keydown.enter.prevent
-        />
+        <InputText v-model="editedAddress" class="w-full max-w-md" @keydown.enter.prevent />
       </div>
 
-      <Button
-        label="Mettre à jour"
-        icon="pi pi-save"
-        class="bg-purple-600 hover:bg-purple-700 text-white mb-6"
-        @click="updateEmail"
-        :loading="updating"
-      />
+      <Button label="Mettre à jour" icon="pi pi-save" class="bg-purple-600 hover:bg-purple-700 text-white mb-6"
+        @click="updateEmail" :loading="updating" />
 
-      <Button
-        label="Envoyer un message"
-        icon="pi pi-send"
-        class="ml-4 bg-blue-600 hover:bg-blue-700 text-white mb-6"
-        @click="goToSendMessage"
-      />
+      <Button label="Envoyer un message" icon="pi pi-send" class="ml-4 bg-blue-600 hover:bg-blue-700 text-white mb-6"
+        @click="goToSendMessage" />
 
       <Message v-if="successMessage" severity="success" class="mb-4">
         {{ successMessage }}
@@ -52,10 +39,7 @@
       </Message>
 
       <EmailDetailsSent :messages="sentMessages" :idEmailAddress="emailId" />
-      <EmailDetailsReceived
-        :messages="receivedMessages"
-        :idEmailAddress="emailId"
-      />
+      <EmailDetailsReceived :messages="receivedMessages" :idEmailAddress="emailId" />
     </div>
   </div>
 </template>
@@ -83,6 +67,8 @@ const successMessage = ref(null);
 const userId = ref(null); // pour PATCH
 
 onMounted(async () => {
+  await getEmailAddressInformation(emailId);
+
   try {
     const resSent = await fetch(
       `${BACKEND_URL}/messages/sent_messages?id_email_address=${emailId}`
@@ -92,24 +78,6 @@ onMounted(async () => {
 
     sentMessages.value = Array.isArray(dataSent) ? dataSent : [];
 
-    let currentEmail = null;
-    if (
-      Array.isArray(dataSent) &&
-      dataSent.length > 0 &&
-      dataSent[0]?.fromEmail
-    ) {
-      currentEmail = dataSent[0].fromEmail;
-    }
-
-    if (currentEmail && currentEmail.address) {
-      originalAddress.value = currentEmail.address;
-      editedAddress.value = currentEmail.address;
-      userId.value = currentEmail.userId || currentEmail.user?.id || null;
-    } else {
-      originalAddress.value = "Adresse inconnue";
-      editedAddress.value = "";
-      userId.value = null;
-    }
 
     const resReceived = await fetch(
       `${BACKEND_URL}/messages/received_messages?id_email_address=${emailId}`
@@ -184,7 +152,7 @@ async function updateEmail() {
       );
     }
 
-    await reloadEmailAddress();
+    await getEmailAddressInformation(emailId);
 
     successMessage.value = `Adresse mise à jour avec succès.`;
   } catch (err) {
@@ -194,31 +162,21 @@ async function updateEmail() {
   }
 }
 
-// Fonction pour recharger l'adresse mail depuis le backend
-async function reloadEmailAddress() {
+async function getEmailAddressInformation(idEmailAddress) {
   try {
-    const resSent = await fetch(
-      `${BACKEND_URL}/messages/sent_messages?id_email_address=${emailId}`
+    const resEmailAddress = await fetch(
+      `${BACKEND_URL}/email_address/${idEmailAddress}`
     );
-    if (!resSent.ok) throw new Error(`Erreur ${resSent.status}`);
+    if (!resEmailAddress.ok) throw new Error(`Erreur ${resEmailAddress.status}`);
 
-    const dataSent = await resSent.json();
-    sentMessages.value = Array.isArray(dataSent) ? dataSent : [];
+    const currentEmail = await resEmailAddress.json();
 
-    let currentEmail = null;
-    if (
-      Array.isArray(dataSent) &&
-      dataSent.length > 0 &&
-      dataSent[0]?.fromEmail
-    ) {
-      currentEmail = dataSent[0].fromEmail;
-    }
-
-    if (currentEmail && currentEmail.address) {
+    if (currentEmail && currentEmail.address){
       originalAddress.value = currentEmail.address;
       editedAddress.value = currentEmail.address;
       userId.value = currentEmail.userId || currentEmail.user?.id || null;
-    } else {
+    }
+    else{
       originalAddress.value = "Adresse inconnue";
       editedAddress.value = "";
       userId.value = null;

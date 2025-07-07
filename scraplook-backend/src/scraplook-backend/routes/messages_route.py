@@ -12,7 +12,7 @@ from services.messages_services import (
     get_user_messages_received,
     get_user_message,
     send_message,
-    delete_message,
+    safe_delete_message,
 )
 from config.app_config import get_app_config
 from config.prisma_client import get_prisma_instance
@@ -113,4 +113,4 @@ async def delete_mail(
     Returns:
 
     """
-    await delete_message(prisma, id_email_address, id_message)
+    await safe_delete_message(prisma, id_email_address, id_message)
