@@ -30,6 +30,25 @@ async def get_user_email_addresses(prisma: Prisma, id_user: str) -> list[Email]:
     )
 
 
+async def get_email_address_information(prisma: Prisma, id_email_address: str) -> Email:
+    """
+    Retrieve email address information of a user in DB.
+
+    Args:
+        prisma: DB connection.
+        id_email_address: Email address ID.
+
+    Returns:
+        Email: Email address of user.
+    """
+    return await prisma.email.find_unique_or_raise(
+        where={
+            "id": id_email_address,
+        },
+        include={"user": True},
+    )
+
+
 async def add_email_address(prisma: Prisma, email_info: EmailAddressInput) -> None:
     """
     Add email address to a user in DB.
