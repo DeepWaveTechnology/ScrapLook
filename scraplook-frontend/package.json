@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@primeuix/styles": "^1.2.1",
+    "@primevue/forms": "^4.3.6",
     "primeicons": "^7.0.0",
     "primevue": "^3.53.1",
     "tailwindcss": "^4.1.11",

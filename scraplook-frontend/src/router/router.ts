@@ -5,6 +5,7 @@ import CreateUser from '@/components/user/CreateUser.vue'
 import CreateMail from '@/components/mail/CreateMail.vue'
 import SendMessage from '@/components/message/SendMessage.vue'
 import Home from '@/components/Home.vue'
+import LoginPage from '@/components/LoginPage.vue'
 
 const routes = [
   {
@@ -16,6 +17,11 @@ const routes = [
     path: '/users',
     name: 'Users',
     component: ViewUsers
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: LoginPage
   },
   {
     path: '/email/:emailId',

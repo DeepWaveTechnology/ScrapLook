@@ -20,6 +20,7 @@ declare module 'vue' {
     Header: typeof import('./src/components/Header.vue')['default']
     Home: typeof import('./src/components/Home.vue')['default']
     InputText: typeof import('primevue/inputtext')['default']
+    LoginPage: typeof import('./src/components/LoginPage.vue')['default']
     Main: typeof import('./src/components/Main.vue')['default']
     Message: typeof import('primevue/message')['default']
     MultiSelect: typeof import('primevue/multiselect')['default']

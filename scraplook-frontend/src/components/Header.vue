@@ -25,6 +25,12 @@ const items = ref([
     command: () => router.push('/users'),
     class: 'text-lg'
   },
+  {
+    label: 'Connexion',
+    icon: 'pi pi-sign-in',
+    command: () => router.push('/login'),
+    class: 'text-lg'
+  }
 ])
 </script>
 
