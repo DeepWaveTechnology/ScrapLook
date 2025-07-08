@@ -8,6 +8,7 @@
     * [Front](#front)
     * [Backend](#backend)
   * [Présentation](#présentation)
+  * [Configuration du fichier .env ](#configuration-du-fichier-env )
   * [Installation et lancement du serveur back](#installation-et-lancement-du-serveur-back)
   * [Installation et lancement du serveur front](#installation-et-lancement-du-serveur-front)
 
