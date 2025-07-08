@@ -109,6 +109,20 @@
         - Paramètres: Identifiant du message à supprimer.
         - Retours: 200_OK
 
+## Configuration du fichier .env 
+
+Le projet contient un fichier .env dans le répertoire **ScrapLook\scraplook-backend**. 
+Il faut le remplir avant sa clé de cryptage et le temps en minute que va durer le token d'accès avant de lancer le projet. 
+Il doit être écrit de cette façon : 
+```bash
+encryption_key="..."
+access_token_duration_minutes=30
+```
+La clé de cryptage (encryption_key) peut être généré à l'aide de cette commande (par exemple, sur Linux) : 
+```bash
+openssl rand -base64 32
+```
+
 ## Installation et lancement du serveur back
 
 Se positionner dans le répertoire **ScrapLook\scraplook-backend**.
@@ -123,3 +137,12 @@ pdm dev #pdm prod ==> pour la production (configuration à éditer dans le fichi
 Accéder à l'url <a href="http://127.0.0.1:8000/docs">localhost</a>, puis appeler l'endpoint **/seeder/populate**, pour créer un jeux de données de départ.
 
 ## Installation et lancement du serveur front
+
+Se positionner dans le répertoire **ScrapLook\scraplook-frontend**.
+
+```bash
+npm install
+npm run dev
+```
+
+Accéder à l'url <a href="http://127.0.0.1:5173/">localhost</a>. 
