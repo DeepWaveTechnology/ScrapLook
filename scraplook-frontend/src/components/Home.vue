@@ -5,6 +5,9 @@
         <div class="text-3xl font-bold text-purple-700">
           Bienvenue sur ce gestionnaire de messagerie
         </div>
+        <div v-if="userName" class="text-sm text-gray-500 mt-2">
+          ✅ Connecté en tant que <span class="font-semibold">{{ userName }}</span>
+        </div>
       </template>
       <template #content>
         <p class="text-gray-600 mt-4 text-lg">
@@ -17,5 +20,8 @@
 </template>
 
 <script setup>
-// Rien de spécial ici pour l’instant
+import { useAuth } from '@/composables/useAuth'
+import Card from 'primevue/card'
+
+const { userName } = useAuth()
 </script>
