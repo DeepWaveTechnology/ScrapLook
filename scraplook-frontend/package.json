@@ -1,7 +1,7 @@
 {
   "name": "scraplook-frontend",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.4",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,6 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@primeuix/styles": "^1.2.1",
+    "@primevue/forms": "^4.3.6",
+    "axios": "^1.10.0",
     "primeicons": "^7.0.0",
     "primevue": "^3.53.1",
     "tailwindcss": "^4.1.11",

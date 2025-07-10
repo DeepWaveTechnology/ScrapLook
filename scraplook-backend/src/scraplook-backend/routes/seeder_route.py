@@ -3,14 +3,11 @@
 from random import randint
 from fastapi import APIRouter, status, Depends
 from prisma import Prisma
-from passlib.context import CryptContext
 
+from utils.hash import hash_str_chain
 from config.prisma_client import get_prisma_instance
 
 router = APIRouter(prefix="/seeder", tags=["seeder"], dependencies=[])
-
-# Création du contexte bcrypt pour hasher les mots de passe
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 @router.get("/populate", status_code=status.HTTP_201_CREATED)
@@ -58,7 +55,7 @@ async def user_seeder(prisma: Prisma = Depends(get_prisma_instance)) -> dict[str
     ]
 
     for user_data in users_data:
-        hashed_password = pwd_context.hash(user_data["password"])
+        hashed_password = hash_str_chain(user_data["password"])
         await prisma.user.create(
             data={"name": user_data["name"], "password": hashed_password}
         )

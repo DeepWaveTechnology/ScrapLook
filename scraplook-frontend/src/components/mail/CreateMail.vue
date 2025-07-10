@@ -38,7 +38,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRoute } from "vue-router";
-import { BACKEND_URL } from "@/config";
+import api from '@/api'
 
 // Récupération de l'ID utilisateur depuis l'URL
 const route = useRoute();
@@ -63,37 +63,29 @@ function isValidEmail(email) {
 
 // Soumission du formulaire
 async function submitForm() {
-  successMessage.value = "";
-  errorMessage.value = "";
+  successMessage.value = ''
+  errorMessage.value = ''
 
   if (!isValidEmail(form.value.address)) {
-    errorMessage.value = "Veuillez entrer une adresse email valide.";
-    return;
+    errorMessage.value = "Veuillez entrer une adresse email valide."
+    return
   }
 
-  loading.value = true;
+  loading.value = true
 
   try {
-    const response = await fetch(`${BACKEND_URL}/email_address/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form.value),
-    });
+    const { data } = await api.post('/email_address/', form.value)
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(
-        errorData.detail?.[0]?.msg || "Erreur lors de la création de l’email"
-      );
-    }
-
-    const result = await response.json();
-    successMessage.value = `Email ajouté avec succès : ${form.value.address}`;
-    form.value.address = "";
+    successMessage.value = `Email ajouté avec succès : ${form.value.address}`
+    form.value.address = ''
   } catch (err) {
-    errorMessage.value = err.message;
+    const msg =
+      err.response?.data?.detail?.[0]?.msg ||
+      err.response?.data?.detail ||
+      err.message
+    errorMessage.value = msg
   } finally {
-    loading.value = false;
+    loading.value = false
   }
 }
 </script>

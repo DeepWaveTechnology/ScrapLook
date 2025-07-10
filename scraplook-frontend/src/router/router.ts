@@ -5,6 +5,8 @@ import CreateUser from '@/components/user/CreateUser.vue'
 import CreateMail from '@/components/mail/CreateMail.vue'
 import SendMessage from '@/components/message/SendMessage.vue'
 import Home from '@/components/Home.vue'
+import LoginPage from '@/components/LoginPage.vue'
+import { useAuth } from '@/composables/useAuth'
 
 const routes = [
   {
@@ -15,36 +17,66 @@ const routes = [
   {
     path: '/users',
     name: 'Users',
-    component: ViewUsers
+    component: ViewUsers,
+    beforeEnter: [loginGuard]
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: LoginPage,
+    beforeEnter: [loginGuard]
   },
   {
     path: '/email/:emailId',
     name: 'EmailDetail',
     component: EmailDetails,
-    props: true
+    props: true,
+    beforeEnter: [loginGuard]
   },
   {
     path: '/create/user',
     name: 'CreateUser',
-    component: CreateUser
+    component: CreateUser,
+    beforeEnter: [loginGuard]
   },
   {
     path: '/create/mail:userId',
     name: 'CreateMail',
     component: CreateMail,
-    props: true
+    props: true,
+    beforeEnter: [loginGuard]
   },
   {
     path: '/message/send/:id_address_mail',
     name: 'SendMessage',
     component: SendMessage,
-    props: true
+    props: true,
+    beforeEnter: [loginGuard]
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
-})
+});
+
+function loginGuard(to: object): string|boolean{
+  const { isLoggedIn } = useAuth();
+
+  //if destination is login page, check user is not already logged in
+  if (to.fullPath === "/login"){
+
+    //redirect user to users page if user is connected
+    if (isLoggedIn.value){
+      return '/users';
+    }
+    
+    //user is not connected, accepts redirection
+    return true;
+  }
+
+  return !!isLoggedIn.value;
+
+}
 
 export default router

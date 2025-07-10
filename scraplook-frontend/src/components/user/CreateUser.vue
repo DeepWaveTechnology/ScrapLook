@@ -34,7 +34,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { BACKEND_URL } from "@/config";
+import api from '@/api'
 
 const form = ref({
   name: '',
@@ -52,18 +52,8 @@ async function submitForm() {
   errorMessage.value = ''
 
   try {
-    const response = await fetch(`${BACKEND_URL}/user/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form.value),
-    })
+    const { data: result } = await api.post('/user/', form.value)
 
-    if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(errorData.detail?.[0]?.msg || 'Erreur lors de la création')
-    }
-
-    const result = await response.json()
     successMessage.value = `Utilisateur "${result.name}" créé avec succès !`
     form.value.name = ''
     form.value.password = ''
@@ -72,7 +62,8 @@ async function submitForm() {
     // router.push('/users')
 
   } catch (err) {
-    errorMessage.value = err.message
+    errorMessage.value =
+      err.response?.data?.detail?.[0]?.msg || err.message || 'Erreur lors de la création'
   } finally {
     loading.value = false
   }

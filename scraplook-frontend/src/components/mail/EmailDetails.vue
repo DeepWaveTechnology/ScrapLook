@@ -49,7 +49,7 @@ import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import EmailDetailsSent from "./EmailDetailsSent.vue";
 import EmailDetailsReceived from "./EmailDetailsReceived.vue";
-import { BACKEND_URL } from "@/config";
+import api from "@/api"
 
 const route = useRoute();
 const router = useRouter();
@@ -66,126 +66,96 @@ const updateError = ref(null);
 const successMessage = ref(null);
 const userId = ref(null); // pour PATCH
 
-onMounted(async () => {
-  await getEmailAddressInformation(emailId);
-
-  try {
-    const resSent = await fetch(
-      `${BACKEND_URL}/messages/sent_messages?id_email_address=${emailId}`
-    );
-    if (!resSent.ok) throw new Error(`Erreur ${resSent.status}`);
-    const dataSent = await resSent.json();
-
-    sentMessages.value = Array.isArray(dataSent) ? dataSent : [];
-
-
-    const resReceived = await fetch(
-      `${BACKEND_URL}/messages/received_messages?id_email_address=${emailId}`
-    );
-    if (!resReceived.ok) throw new Error(`Erreur ${resReceived.status}`);
-    const dataReceived = await resReceived.json();
-    receivedMessages.value = Array.isArray(dataReceived) ? dataReceived : [];
-  } catch (err) {
-    error.value = err.message;
-  } finally {
-    loading.value = false;
-  }
-});
-
-async function updateEmail() {
-  updateError.value = null;
-  successMessage.value = null;
-
-  const trimmedAddress = editedAddress.value.trim();
-
-  if (!trimmedAddress) {
-    updateError.value = "L'adresse email ne peut pas être vide.";
-    return;
-  }
-
-  // Validation du format email avec ta regex
-  const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-  if (!emailRegex.test(trimmedAddress)) {
-    updateError.value = "L'adresse email n'est pas valide.";
-    return;
-  }
-
-  // Vérification qu'il n'y ait pas de chiffre dans la partie domaine après le '@'
-  const domainPart = trimmedAddress.split("@")[1];
-  if (/\d/.test(domainPart)) {
-    updateError.value =
-      "La partie domaine de l'adresse email ne doit pas contenir de chiffre.";
-    return;
-  }
-
-  if (trimmedAddress === originalAddress.value) {
-    updateError.value = "L'adresse est identique à l'originale.";
-    return;
-  }
-
-  if (!userId.value) {
-    updateError.value = "Utilisateur introuvable pour cette adresse.";
-    return;
-  }
-
-  updating.value = true;
-
-  try {
-    const res = await fetch(`${BACKEND_URL}/email_address/${emailId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        address: trimmedAddress,
-        userId: userId.value,
-      }),
-    });
-
-    if (!res.ok) {
-      let errorData;
-      try {
-        errorData = await res.json();
-      } catch {
-        errorData = null;
-      }
-      throw new Error(
-        errorData?.detail?.[0]?.msg || "Erreur lors de la mise à jour"
-      );
-    }
-
-    await getEmailAddressInformation(emailId);
-
-    successMessage.value = `Adresse mise à jour avec succès.`;
-  } catch (err) {
-    updateError.value = err.message;
-  } finally {
-    updating.value = false;
-  }
-}
-
+// -------- Récupération des infos de l’adresse email ----------
 async function getEmailAddressInformation(idEmailAddress) {
   try {
-    const resEmailAddress = await fetch(
-      `${BACKEND_URL}/email_address/${idEmailAddress}`
-    );
-    if (!resEmailAddress.ok) throw new Error(`Erreur ${resEmailAddress.status}`);
+    const { data: currentEmail } = await api.get(`/email_address/${idEmailAddress}`)
 
-    const currentEmail = await resEmailAddress.json();
-
-    if (currentEmail && currentEmail.address){
-      originalAddress.value = currentEmail.address;
-      editedAddress.value = currentEmail.address;
-      userId.value = currentEmail.userId || currentEmail.user?.id || null;
-    }
-    else{
-      originalAddress.value = "Adresse inconnue";
-      editedAddress.value = "";
-      userId.value = null;
+    if (currentEmail && currentEmail.address) {
+      originalAddress.value = currentEmail.address
+      editedAddress.value = currentEmail.address
+      userId.value = currentEmail.userId || currentEmail.user?.id || null
+    } else {
+      originalAddress.value = "Adresse inconnue"
+      editedAddress.value = ""
+      userId.value = null
     }
   } catch (err) {
-    error.value = err.message;
+    error.value = err.response?.data?.detail || err.message
   }
 }
 
+// -------- Chargement des messages envoyés et reçus ----------
+onMounted(async () => {
+  await getEmailAddressInformation(emailId)
+
+  try {
+    const { data: dataSent } = await api.get(`/messages/sent_messages`, {
+      params: { id_email_address: emailId },
+    })
+    sentMessages.value = Array.isArray(dataSent) ? dataSent : []
+
+    const { data: dataReceived } = await api.get(`/messages/received_messages`,
+        {
+      params: { id_email_address: emailId },
+    })
+    receivedMessages.value = Array.isArray(dataReceived) ? dataReceived : []
+  } catch (err) {
+    error.value = err.response?.data?.detail || err.message
+  } finally {
+    loading.value = false
+  }
+})
+
+// -------- Mise à jour de l'adresse email ----------
+async function updateEmail() {
+  updateError.value = ""
+  successMessage.value = ""
+
+  const trimmedAddress = editedAddress.value.trim()
+
+  const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+  if (!trimmedAddress) {
+    updateError.value = "L'adresse email ne peut pas être vide."
+    return
+  }
+  if (!emailRegex.test(trimmedAddress)) {
+    updateError.value = "L'adresse email n'est pas valide."
+    return
+  }
+  const domainPart = trimmedAddress.split("@")[1]
+  if (/\d/.test(domainPart)) {
+    updateError.value = "La partie domaine de l'adresse email ne doit pas contenir de chiffre."
+    return
+  }
+  if (trimmedAddress === originalAddress.value) {
+    updateError.value = "L'adresse est identique à l'originale."
+    return
+  }
+  if (!userId.value) {
+    updateError.value = "Utilisateur introuvable pour cette adresse."
+    return
+  }
+
+  updating.value = true
+
+  try {
+    await api.patch(`/email_address/${emailId}`, {
+      address: trimmedAddress,
+      userId: userId.value,
+    })
+
+    await getEmailAddressInformation(emailId)
+    successMessage.value = "Adresse mise à jour avec succès."
+  } catch (err) {
+    updateError.value =
+      err.response?.data?.detail?.[0]?.msg ||
+      err.response?.data?.detail ||
+      "Erreur lors de la mise à jour"
+  } finally {
+    updating.value = false
+  }
+}
 function goToSendMessage() {
   router.push(`/message/send/${emailId}`);
 }
