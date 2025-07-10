@@ -64,6 +64,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import { BACKEND_URL } from "@/config";
+import { api } from "@/api";
 
 const props = defineProps({
   messages: {
@@ -94,23 +95,18 @@ async function deleteMessage(messageId) {
   try {
     const id_email_address = props.idEmailAddress;
 
-    const params = new URLSearchParams({
-      id_email_address,
-      id_message: messageId,
+    await api.delete('/messages/', {
+      params: {
+        id_email_address,
+        id_message: messageId,
+      },
     });
-
-    const res = await fetch(`${BACKEND_URL}/messages/?${params.toString()}`, {
-      method: "DELETE",
-    });
-
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.detail?.[0]?.msg || `Erreur ${res.status}`);
-    }
 
     localMessages.value = localMessages.value.filter((m) => m.id !== messageId);
   } catch (err) {
-    alert("Erreur lors de la suppression : " + err.message);
+    const msg =
+      err.response?.data?.detail?.[0]?.msg || err.message || "Erreur inconnue";
+    alert("Erreur lors de la suppression : " + msg);
   } finally {
     deletingId.value = null;
   }

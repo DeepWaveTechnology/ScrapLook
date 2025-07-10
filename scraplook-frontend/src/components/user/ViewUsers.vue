@@ -102,6 +102,7 @@
 import { ref, onMounted } from "vue";
 import { RouterLink } from "vue-router";
 import { BACKEND_URL } from "@/config";
+import api from '@/api'
 
 const users = ref([]);
 const loading = ref(true);
@@ -109,23 +110,19 @@ const error = ref(null);
 
 onMounted(async () => {
   try {
-    const res = await fetch(`${BACKEND_URL}/user/all`);
-    if (!res.ok) throw new Error(`Erreur ${res.status}`);
-    users.value = await res.json();
+    const res = await api.get('/user/all')
+    users.value = res.data
 
     for (const user of users.value) {
-      const emailRes = await fetch(
-        `${BACKEND_URL}/email_address/all?user_id=${user.id}`
-      );
-      if (!emailRes.ok) throw new Error(`Erreur ${emailRes.status}`);
-      user.emails = await emailRes.json();
+      const emailRes = await api.get(`/email_address/all?user_id=${user.id}`)
+      user.emails = emailRes.data
     }
   } catch (err) {
-    error.value = err.message;
+    error.value = err.response?.data?.message || err.message || 'Erreur inconnue'
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-});
+})
 
 function getFirstName(fullName) {
   if (!fullName) return "";
@@ -140,23 +137,19 @@ function getLastName(fullName) {
 }
 
 async function deleteEmail(emailId, userId) {
-  const confirmed = confirm("Voulez-vous vraiment supprimer cette adresse email ?");
-  if (!confirmed) return;
+  const confirmed = confirm("Voulez-vous vraiment supprimer cette adresse email ?")
+  if (!confirmed) return
 
   try {
-    const res = await fetch(`${BACKEND_URL}/email_address/${emailId}`, {
-      method: "DELETE",
-    });
-    if (!res.ok) throw new Error(`Erreur ${res.status}`);
+    await api.delete(`/email_address/${emailId}`)
 
     // Retirer l’email supprimé de la liste
-    const user = users.value.find((u) => u.id === userId);
+    const user = users.value.find((u) => u.id === userId)
     if (user) {
-      user.emails = user.emails.filter((e) => e.id !== emailId);
+      user.emails = user.emails.filter((e) => e.id !== emailId)
     }
   } catch (err) {
-    alert("Erreur lors de la suppression : " + err.message);
+    alert("Erreur lors de la suppression : " + (err.response?.data?.message || err.message))
   }
 }
-
 </script>

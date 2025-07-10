@@ -108,6 +108,7 @@
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { BACKEND_URL } from "@/config";
+import { api } from "@/api";
 
 const route = useRoute();
 const fromId = route.params.id_address_mail;
@@ -124,15 +125,14 @@ const successMessage = ref(null);
 
 onMounted(async () => {
   try {
-    const res = await fetch(`${BACKEND_URL}/user/all`);
-    if (!res.ok) throw new Error(`Erreur ${res.status}`);
-    const users = await res.json();
+    const { data: users } = await api.get("/user/all");
 
     // Charger les adresses email par utilisateur
     for (const user of users) {
-      const emailRes = await fetch(`${BACKEND_URL}/email_address/all?user_id=${user.id}`);
-      if (!emailRes.ok) throw new Error(`Erreur ${emailRes.status}`);
-      user.emails = await emailRes.json();
+      const { data: emails } = await api.get("/email_address/all", {
+        params: { user_id: user.id },
+      });
+      user.emails = emails;
     }
 
     // Construire les options pour MultiSelect avec emailId + type
@@ -141,12 +141,13 @@ onMounted(async () => {
         label: email.address,
         value: {
           emailId: email.id,
-          type: "TO", // Tu peux adapter ici selon besoin : "TO", "CC", etc.
+          type: "TO", // Peut être adapté dynamiquement
         },
       }))
     );
   } catch (err) {
-    error.value = err.message;
+    error.value =
+      err.response?.data?.detail?.[0]?.msg || err.message || "Erreur inattendue";
   } finally {
     loading.value = false;
   }
@@ -178,24 +179,15 @@ async function sendMessage() {
 
     console.log("Payload envoyé :", JSON.stringify(payload, null, 2));
 
-    const res = await fetch(`${BACKEND_URL}/messages/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    await api.post("/messages/", payload);
 
-    if (res.status !== 201) {
-      const errData = await res.json();
-      throw new Error(errData.detail?.[0]?.msg || "Erreur lors de l'envoi");
-    }
-
-    // Succès
     successMessage.value = "Message envoyé avec succès !";
     subject.value = "";
     body.value = "";
     selectedRecipients.value = [];
   } catch (err) {
-    sendError.value = err.message;
+    sendError.value =
+      err.response?.data?.detail?.[0]?.msg || err.message || "Erreur lors de l'envoi";
   } finally {
     sending.value = false;
   }
