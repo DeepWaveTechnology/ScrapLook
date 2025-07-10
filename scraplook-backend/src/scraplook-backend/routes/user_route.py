@@ -1,12 +1,14 @@
 """
 Route module to manage user.
 """
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, status, HTTPException
 from prisma import Prisma, errors
 from prisma.models import User
 
-from models.user import UserInput
+from models.user import UserInput, UserOutput
+from routes.auth_route import get_current_user
 from services.user_services import get_all_users, get_user_by_id, add_new_user
 from config.app_config import get_app_config
 from config.prisma_client import get_prisma_instance
@@ -17,7 +19,9 @@ APP_CONFIG = get_app_config()
 
 
 @router.get("/all", status_code=status.HTTP_200_OK, response_model=list[User])
-async def get_all(prisma: Prisma = Depends(get_prisma_instance)) -> list[User]:
+async def get_all(
+    user: Annotated[UserOutput, Depends(get_current_user)],
+    prisma: Prisma = Depends(get_prisma_instance)) -> list[User]:
     """
     Endpoint to get all users.
 
@@ -31,7 +35,10 @@ async def get_all(prisma: Prisma = Depends(get_prisma_instance)) -> list[User]:
 
 
 @router.get("/{id_user}", status_code=status.HTTP_200_OK, response_model=User)
-async def get_user(id_user: str, prisma: Prisma = Depends(get_prisma_instance)) -> User:
+async def get_user(
+        id_user: str,
+        user: Annotated[UserOutput, Depends(get_current_user)],
+        prisma: Prisma = Depends(get_prisma_instance)) -> User:
     """
     Endpoint to get a single user given its ID.
 
@@ -53,6 +60,7 @@ async def get_user(id_user: str, prisma: Prisma = Depends(get_prisma_instance)) 
 
 @router.post("/", status_code=status.HTTP_200_OK, response_model=User)
 async def add_user(
+    user: Annotated[UserOutput, Depends(get_current_user)],
     user_info: UserInput, prisma: Prisma = Depends(get_prisma_instance)
 ) -> User:
     """
