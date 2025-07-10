@@ -176,8 +176,6 @@ async function sendMessage() {
       recipients: selectedRecipients.value, // Contient [{ emailId, type }]
     };
 
-    console.log("Payload envoyé :", JSON.stringify(payload, null, 2));
-
     await api.post("/messages/", payload);
 
     successMessage.value = "Message envoyé avec succès !";

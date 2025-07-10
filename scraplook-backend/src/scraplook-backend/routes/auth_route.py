@@ -4,7 +4,6 @@ Route module to manage user authentification
 
 from typing import Annotated, Optional
 from datetime import datetime, timedelta, timezone
-from passlib.context import CryptContext
 from jose import jwt, JWTError
 from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -13,6 +12,7 @@ from models.user import Token, UserOutput
 from prisma import Prisma, errors
 from prisma.models import User
 from services.user_services import get_user_by_name
+from utils.hash import pwd_context
 from config.app_config import get_app_config
 from config.prisma_client import get_prisma_instance
 
@@ -24,9 +24,6 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 # === OAuth2 ===
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
-
-# === Password hashing ===
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 credentials_exception = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
@@ -49,7 +46,13 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     Returns:
         bool: Indicates if password is equivalent to hashed password.
     """
-    return pwd_context.verify(plain_password, hashed_password)
+    try:
+        return pwd_context.verify(plain_password, hashed_password)
+    except ValueError as error:
+        APP_CONFIG.logger.warning(
+            "Incorrect hashed password format: %s, error: %s", hashed_password, error
+        )
+        return False
 
 
 def create_token(data: dict, expires_delta: timedelta) -> str:

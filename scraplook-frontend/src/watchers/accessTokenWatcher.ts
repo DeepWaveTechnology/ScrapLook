@@ -27,8 +27,6 @@ async function watchAccessTokenValidity(): Promise<void>{
 
     if (isLoggedIn.value){
 
-        console.log("User est connecté, on vérifie l'access token ...");
-
         //call an endpoint to check if access token must be updated
         const doUpdateAccessToken = await checkAccessToken(token.value!);
 
@@ -36,8 +34,6 @@ async function watchAccessTokenValidity(): Promise<void>{
         if (!doUpdateAccessToken){
             return;
         }
-
-        console.log("On update l'access token ...");
 
         await updateAccessToken(refreshToken.value!);
     }
@@ -56,8 +52,6 @@ async function checkAccessToken(accessToken: string): Promise<boolean>{
 
     //retrieve boolean contained in response
     const doUpdateAccessToken = await updateAccessTokenRes.text();
-
-    console.log("Réponse reçue: ", doUpdateAccessToken==="true", doUpdateAccessToken);
 
     return doUpdateAccessToken ===  "true";
 }
@@ -79,11 +73,7 @@ async function updateAccessToken(refreshToken: string): Promise<void>{
       );
     }
 
-    const { token } = useAuth();
     const newAccessToken = await response.json();
-    console.log("Ancien access token : ", token.value);
-    console.log("Nouvel access token : ", newAccessToken.access_token);
-
 
     //save access token
     const { saveAccessToken } = useAuth();

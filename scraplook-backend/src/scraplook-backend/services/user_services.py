@@ -5,6 +5,7 @@ Service module to manage users in DB.
 from models.user import UserInput
 from prisma import Prisma
 from prisma.models import User
+from utils.hash import hash_str_chain
 
 
 async def get_all_users(prisma: Prisma) -> list[User]:
@@ -63,4 +64,7 @@ async def add_new_user(prisma: Prisma, user_info: UserInput) -> User:
     Returns:
         User: User inserted in DB.
     """
+    # hash password
+    user_info.password = hash_str_chain(user_info.password)
+
     return await prisma.user.create(data=user_info.model_dump())
