@@ -56,7 +56,6 @@
 
 <script setup>
 import { ref, watch } from "vue";
-import { BACKEND_URL } from "@/config";
 import api from '@/api'
 
 const props = defineProps({

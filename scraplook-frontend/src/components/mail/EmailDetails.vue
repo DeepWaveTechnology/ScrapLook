@@ -49,7 +49,6 @@ import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import EmailDetailsSent from "./EmailDetailsSent.vue";
 import EmailDetailsReceived from "./EmailDetailsReceived.vue";
-import { BACKEND_URL } from "@/config";
 import api from "@/api"
 
 const route = useRoute();
@@ -96,7 +95,8 @@ onMounted(async () => {
     })
     sentMessages.value = Array.isArray(dataSent) ? dataSent : []
 
-    const { data: dataReceived } = await api.get(`/messages/received_messages`, {
+    const { data: dataReceived } = await api.get(`/messages/received_messages`,
+        {
       params: { id_email_address: emailId },
     })
     receivedMessages.value = Array.isArray(dataReceived) ? dataReceived : []

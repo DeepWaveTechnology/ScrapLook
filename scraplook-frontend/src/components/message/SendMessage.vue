@@ -107,8 +107,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { BACKEND_URL } from "@/config";
-import { api } from "@/api";
+import api from "@/api";
 
 const route = useRoute();
 const fromId = route.params.id_address_mail;

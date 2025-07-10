@@ -38,7 +38,6 @@
 <script setup>
 import { ref } from "vue";
 import { useRoute } from "vue-router";
-import { BACKEND_URL } from "@/config";
 import api from '@/api'
 
 // Récupération de l'ID utilisateur depuis l'URL

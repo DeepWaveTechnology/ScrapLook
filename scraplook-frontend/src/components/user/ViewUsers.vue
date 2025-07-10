@@ -101,7 +101,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { RouterLink } from "vue-router";
-import { BACKEND_URL } from "@/config";
 import api from '@/api'
 
 const users = ref([]);
