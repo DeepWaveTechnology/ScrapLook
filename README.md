@@ -149,3 +149,39 @@ npm run dev
 ```
 
 Accéder à l'url <a href="http://127.0.0.1:5173/">localhost</a>. 
+
+
+## Fonctionnalités du site 
+
+Lorsqu'on lance le projet, on arrive sur la page d'accueil. Avant de pouvoir accéder aux fonctionnalités, du menu utilisateur, il faut se connecter. En effet, les fonctionnalités liés à un compte sont bloqués grâce à des guards côté front et à des dépendances côté back. 
+
+### Connexion et déconnexion 
+
+On peut se connecter via le bouton en haut à droite en utilisant par exemple les comptes ci-dessous : 
+
+```bash
+username : AntoninD, password : azerty
+username : Alice, password : alice123
+username : Jean, password : jean456
+```
+
+Notre système de connexion utilise un acces_token créé avec JWT et stocké dans le localStorage. En parralèle, un refresh_token est aussi créé de la même façon. Il a une date d'expiration plus longue que le premier et sert à régénérer l'access token si besoin. 
+
+Lors de la déconnexion, on supprime le access_token et le refresh_token qui était stockés localement et on met à jour la page web. 
+
+### Page de la liste des utilisateurs
+
+A partir de là, on envoie le access_token dans chaque requête via un HTTP interceptor Axios. 
+
+Sur cette page, il est possible de consulter tous les utilisateurs du site via une route dédiée. 
+On peut aussi créer un utilisateur via le bouton en haut de la liste. Celui-ci sera ajouté à la base de données. Chaque mot de passe dans la base de données est crypté. 
+Enfin, il est possible de supprimer une adresse mail à un utilisateur ou d'en rajouter une via cette page. Encore une fois, le changement sera réflété sur la base de données. 
+
+### Détail d'une adresse mail
+
+En cliquant sur une adresse mail et grâce à plusieurs routes, il est possible de : 
+
+- Mettre à jour l'adresse mail 
+- Envoyer un message 
+- Visualiser et/ou supprimer les messages envoyés 
+- Visualiser et/ou supprimer les messages reçus  
