@@ -6,7 +6,7 @@ const userName = ref(localStorage.getItem('user_name') || '')
 export function useAuth() {
   const isLoggedIn = computed(() => !!token.value)
 
-  function login(newToken, name) {
+  function login(newToken: string, name: string) {
     token.value = newToken
     userName.value = name
     localStorage.setItem('access_token', newToken)

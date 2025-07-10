@@ -29,31 +29,30 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import Menubar from 'primevue/menubar'
 import { useAuth } from '@/composables/useAuth'
 
 const router = useRouter()
-const { token, userName, isLoggedIn, logout } = useAuth()
+const { userName, isLoggedIn, logout } = useAuth()
+
 
 const menuItems = [
-  {
-    label: 'MonApp',
-    icon: 'pi pi-home',
-    command: () => router.push('/'),
-    class: 'text-blue-600 text-3xl font-bold'
-  },
-  {
-    label: 'Utilisateurs',
-    icon: 'pi pi-users',
-    command: () => router.push('/users'),
-    class: 'text-lg'
-  },
-]
-
+    {
+      label: 'MonApp',
+      icon: 'pi pi-home',
+      command: () => router.push('/'),
+      class: 'text-blue-600 text-3xl font-bold'
+    },
+    {
+      label: 'Utilisateurs',
+      icon: 'pi pi-users',
+      command: () => router.push('/users'),
+      class: 'text-lg'
+    },
+  ]
 function goLogin() {
-  router.push('/login')
+  router.push('/login');
 }
 
 function handleLogout() {
