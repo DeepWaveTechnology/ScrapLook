@@ -31,6 +31,8 @@ class EnvData(BaseModel):
 
     encryption_key: Optional[str] = Field(default=_DEFAULT_ENCRYPTION_KEY_VALUE)
     access_token_duration_minutes: int
+    refresh_token_duration_hours: int
+    access_token_invalid_timeout_minutes: int
 
 
 class Config(BaseModel):

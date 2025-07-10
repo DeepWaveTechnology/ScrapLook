@@ -1,6 +1,7 @@
 """
 Route module to manage user.
 """
+
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, status, HTTPException
@@ -21,7 +22,8 @@ APP_CONFIG = get_app_config()
 @router.get("/all", status_code=status.HTTP_200_OK, response_model=list[User])
 async def get_all(
     user: Annotated[UserOutput, Depends(get_current_user)],
-    prisma: Prisma = Depends(get_prisma_instance)) -> list[User]:
+    prisma: Prisma = Depends(get_prisma_instance),
+) -> list[User]:
     """
     Endpoint to get all users.
 
@@ -36,9 +38,10 @@ async def get_all(
 
 @router.get("/{id_user}", status_code=status.HTTP_200_OK, response_model=User)
 async def get_user(
-        id_user: str,
-        user: Annotated[UserOutput, Depends(get_current_user)],
-        prisma: Prisma = Depends(get_prisma_instance)) -> User:
+    id_user: str,
+    user: Annotated[UserOutput, Depends(get_current_user)],
+    prisma: Prisma = Depends(get_prisma_instance),
+) -> User:
     """
     Endpoint to get a single user given its ID.
 
@@ -61,7 +64,8 @@ async def get_user(
 @router.post("/", status_code=status.HTTP_200_OK, response_model=User)
 async def add_user(
     user: Annotated[UserOutput, Depends(get_current_user)],
-    user_info: UserInput, prisma: Prisma = Depends(get_prisma_instance)
+    user_info: UserInput,
+    prisma: Prisma = Depends(get_prisma_instance),
 ) -> User:
     """
     Endpoint to add a new user.

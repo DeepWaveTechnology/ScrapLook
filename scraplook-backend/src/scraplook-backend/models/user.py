@@ -2,7 +2,9 @@
 Module that contains user models.
 """
 
-from pydantic import BaseModel
+from typing import Optional
+
+from pydantic import BaseModel, Field
 from prisma.models import User
 
 
@@ -12,6 +14,7 @@ class Token(BaseModel):
     """
 
     access_token: str
+    refresh_token: Optional[str] = Field(default=None)
     token_type: str
 
 

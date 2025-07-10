@@ -1,27 +1,32 @@
-import { ref, computed } from 'vue'
+import { ref, computed } from 'vue';
 
-const token = ref(localStorage.getItem('access_token') || null)
-const userName = ref(localStorage.getItem('user_name') || '')
+const token = ref(localStorage.getItem('access_token') || null);
+const refreshToken = ref(localStorage.getItem('refresh_token') || null);
+const userName = ref(localStorage.getItem('user_name') || '');
 
 export function useAuth() {
-  const isLoggedIn = computed(() => !!token.value)
+  const isLoggedIn = computed(() => !!token.value);
 
-  function login(newToken: string, name: string) {
-    token.value = newToken
-    userName.value = name
-    localStorage.setItem('access_token', newToken)
-    localStorage.setItem('user_name', name)
+  function login(userAccessToken: string, userRefreshToken: string, name: string) {
+    token.value = userAccessToken;
+    refreshToken.value = userRefreshToken;
+    userName.value = name;
+    localStorage.setItem('access_token', userAccessToken);
+    localStorage.setItem('refresh_token', userRefreshToken);
+    localStorage.setItem('user_name', name);
   }
 
   function logout() {
-    token.value = null
-    userName.value = ''
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('user_name')
+    token.value = null;
+    userName.value = '';
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user_name');
   }
 
   return {
     token,
+    refreshToken,
     userName,
     isLoggedIn,
     login,

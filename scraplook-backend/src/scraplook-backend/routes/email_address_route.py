@@ -1,14 +1,15 @@
 """
 Route module to manage email addresses
 """
+
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, status, HTTPException
 
-from models.user import UserOutput
 from prisma import Prisma, errors
 from prisma.models import Email
 
+from models.user import UserOutput
 from models.email_address import EmailAddressInput
 from routes.auth_route import get_current_user
 from services.email_address_services import (
@@ -28,7 +29,8 @@ APP_CONFIG = get_app_config()
 @router.get("/all", status_code=status.HTTP_200_OK, response_model=list[Email])
 async def get_all(
     user: Annotated[UserOutput, Depends(get_current_user)],
-    user_id: str, prisma: Prisma = Depends(get_prisma_instance)
+    user_id: str,
+    prisma: Prisma = Depends(get_prisma_instance),
 ) -> list[Email]:
     """
     Endpoint to get all email addresses for a given user.
@@ -46,7 +48,8 @@ async def get_all(
 @router.get("/{id_email_address}", status_code=status.HTTP_200_OK, response_model=Email)
 async def get_one(
     user: Annotated[UserOutput, Depends(get_current_user)],
-    id_email_address: str, prisma: Prisma = Depends(get_prisma_instance)
+    id_email_address: str,
+    prisma: Prisma = Depends(get_prisma_instance),
 ) -> Email:
     """
     Endpoint to get an email.
@@ -70,7 +73,8 @@ async def get_one(
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def add_user_email_address(
     user: Annotated[UserOutput, Depends(get_current_user)],
-    email_info: EmailAddressInput, prisma: Prisma = Depends(get_prisma_instance)
+    email_info: EmailAddressInput,
+    prisma: Prisma = Depends(get_prisma_instance),
 ):
     """
     Endpoint to add a new email address to a given user.
@@ -115,7 +119,8 @@ async def update_user_email_address(
 @router.delete("/{id_email_address}", status_code=status.HTTP_200_OK)
 async def delete_user_email_address(
     user: Annotated[UserOutput, Depends(get_current_user)],
-    id_email_address: str, prisma: Prisma = Depends(get_prisma_instance)
+    id_email_address: str,
+    prisma: Prisma = Depends(get_prisma_instance),
 ):
     """
     Endpoint to delete a user email address.

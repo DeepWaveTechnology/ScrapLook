@@ -1,14 +1,15 @@
 """
 Route module to manage messages.
 """
+
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, status, HTTPException
 
-from models.user import UserOutput
 from prisma import Prisma, errors
 from prisma.models import Message
 
+from models.user import UserOutput
 from models.message import MessageInput
 from routes.auth_route import get_current_user
 from services.messages_services import (
@@ -29,7 +30,8 @@ APP_CONFIG = get_app_config()
 @router.get("/sent_messages", response_model=list[Message])
 async def get_sent_messages(
     user: Annotated[UserOutput, Depends(get_current_user)],
-    id_email_address: str, prisma: Prisma = Depends(get_prisma_instance)
+    id_email_address: str,
+    prisma: Prisma = Depends(get_prisma_instance),
 ) -> list[Message]:
     """
     Endpoint to retrieve messages sent by an email address.
@@ -47,7 +49,8 @@ async def get_sent_messages(
 @router.get("/received_messages", response_model=list[Message])
 async def get_received_messages(
     user: Annotated[UserOutput, Depends(get_current_user)],
-    id_email_address: str, prisma: Prisma = Depends(get_prisma_instance)
+    id_email_address: str,
+    prisma: Prisma = Depends(get_prisma_instance),
 ) -> list[Message]:
     """
     Endpoint to get messages received by an email address.
@@ -65,7 +68,8 @@ async def get_received_messages(
 @router.get("/{id_message}", response_model=Message)
 async def get_message(
     user: Annotated[UserOutput, Depends(get_current_user)],
-    id_message: str, prisma: Prisma = Depends(get_prisma_instance)
+    id_message: str,
+    prisma: Prisma = Depends(get_prisma_instance),
 ) -> Message:
     """
     Endpoint to retrieve message information by ID.
@@ -89,7 +93,8 @@ async def get_message(
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def send_mail(
     user: Annotated[UserOutput, Depends(get_current_user)],
-    message_info: MessageInput, prisma: Prisma = Depends(get_prisma_instance)
+    message_info: MessageInput,
+    prisma: Prisma = Depends(get_prisma_instance),
 ):
     """
     Endpoint to send a message from an email address.

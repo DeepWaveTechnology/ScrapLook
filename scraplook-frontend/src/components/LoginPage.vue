@@ -80,8 +80,7 @@ async function submitForm() {
     if (!response.ok) {
       throw new Error(data.detail || "Erreur d'authentification")
     }
-
-    login(data.access_token, form.value.name)
+    login(data.access_token, data.refresh_token, form.value.name);
 
     successMessage.value = 'Connexion réussie !'
     router.push('/')

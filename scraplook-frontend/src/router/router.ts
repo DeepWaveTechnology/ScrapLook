@@ -62,7 +62,6 @@ const router = createRouter({
 
 function loginGuard(to: object): string|boolean{
   const { isLoggedIn } = useAuth();
-  console.log(!!isLoggedIn.value, to); 
 
   //if destination is login page, check user is not already logged in
   if (to.fullPath === "/login"){

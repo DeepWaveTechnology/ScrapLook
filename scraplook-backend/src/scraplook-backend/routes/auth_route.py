@@ -28,6 +28,12 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 # === Password hashing ===
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+credentials_exception = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Impossible de valider les identifiants",
+    headers={"WWW-Authenticate": "Bearer"},
+)
+
 APP_CONFIG = get_app_config()
 
 
@@ -46,9 +52,9 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-def create_access_token(data: dict, expires_delta: timedelta) -> str:
+def create_token(data: dict, expires_delta: timedelta) -> str:
     """
-    Create JWT access token.
+    Create JWT access or refresh token.
 
     Args:
         data: Data to encode.
@@ -117,11 +123,19 @@ async def login_for_access_token(
     access_token_expires = timedelta(
         minutes=APP_CONFIG.env_data.access_token_duration_minutes
     )
-    access_token = create_access_token(
+    refresh_token_expires = timedelta(
+        hours=APP_CONFIG.env_data.refresh_token_duration_hours
+    )
+    access_token = create_token(
         data={"sub": user.name}, expires_delta=access_token_expires
     )
+    refresh_token = create_token(
+        data={"sub": user.name}, expires_delta=refresh_token_expires
+    )
 
-    return Token(access_token=access_token, token_type="bearer")
+    return Token(
+        access_token=access_token, refresh_token=refresh_token, token_type="bearer"
+    )
 
 
 async def get_current_user(
@@ -138,18 +152,15 @@ async def get_current_user(
     Returns:
         UserOutput: User object with current access token.
     """
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Impossible de valider les identifiants",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
     try:
         payload = jwt.decode(
             token, APP_CONFIG.env_data.encryption_key, algorithms=[ALGORITHM]
         )
         username = payload.get("sub")
     except JWTError as error:
-        APP_CONFIG.logger.warning("Failed to decode jwt token '%s': %s", token, error)
+        APP_CONFIG.logger.warning(
+            "Failed to decode jwt access token '%s': %s", token, error
+        )
         raise credentials_exception from error
 
     if payload.get("sub") is None:
@@ -166,15 +177,105 @@ async def get_current_user(
     )
 
 
+@router.get("/check_refresh_access_token", response_model=bool)
+async def check_refresh_access_token(
+    token: Annotated[str, Depends(oauth2_scheme)],
+) -> bool:
+    """
+    Route to check if access token must be refreshed.
+
+    The access token must be refreshed if today date
+    and access token timeout exceed access token expiration.
+
+    Args:
+        token: Access token to check.
+
+    Returns: True if access token must be refreshed, otherwise False.
+    """
+    try:
+        payload = jwt.decode(
+            token, APP_CONFIG.env_data.encryption_key, algorithms=[ALGORITHM]
+        )
+    except JWTError as error:
+        APP_CONFIG.logger.warning(
+            "Failed to decode jwt access token to check '%s': %s", token, error
+        )
+        raise credentials_exception from error
+
+    # check if access token is invalid in xx
+    access_token_timeout = timedelta(
+        minutes=APP_CONFIG.env_data.access_token_invalid_timeout_minutes
+    )
+
+    if (
+        payload.get("exp") is not None
+        or datetime.now().astimezone() + access_token_timeout
+        >= datetime.fromtimestamp(payload.get("exp")).astimezone()
+    ):
+        APP_CONFIG.logger.info(
+            "Access token has to be refreshed for user with name '%s'",
+            payload.get("sub"),
+        )
+        return True
+
+    return False
+
+
+@router.get("/refresh_access_token", response_model=Token)
+async def refresh_access_token(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    prisma: Prisma = Depends(get_prisma_instance),
+) -> Token:
+    """
+    Refresh current access token by generating new access token.
+
+    Check if refresh token passed as a parameter is valid.
+
+    Args:
+        token: Refresh token used to generate new access token for a user.
+        prisma: DB connection.
+
+    Returns: Refresh access token.
+    """
+    try:
+        payload = jwt.decode(
+            token, APP_CONFIG.env_data.encryption_key, algorithms=[ALGORITHM]
+        )
+        username = payload.get("sub")
+    except JWTError as error:
+        APP_CONFIG.logger.warning(
+            "Failed to decode jwt refresh token '%s': %s", token, error
+        )
+        raise credentials_exception from error
+
+    if payload.get("sub") is None:
+        raise credentials_exception
+
+    user_in_db = await get_user_by_name(prisma, username)
+    user_in_db.password = ""
+    if user_in_db is None:
+        raise credentials_exception
+
+    # create a new access token
+    access_token_expires = timedelta(
+        minutes=APP_CONFIG.env_data.access_token_duration_minutes
+    )
+    new_access_token = create_token(
+        data={"sub": user_in_db.name}, expires_delta=access_token_expires
+    )
+
+    return Token(access_token=new_access_token, token_type="bearer")
+
+
 @router.get("/me", response_model=UserOutput)
-async def read_users_me(current_user: Annotated[UserOutput, Depends(get_current_user)]):
+async def read_users_me(user: Annotated[UserOutput, Depends(get_current_user)]):
     """
     Endpoint to retrieve user information based on an access token.
 
     Args:
-        current_user: User information.
+        user: User information.
 
     Returns:
         UserOutput: User information.
     """
-    return current_user
+    return user

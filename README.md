@@ -118,6 +118,8 @@ Il doit être écrit de cette façon :
 ```bash
 encryption_key="..."
 access_token_duration_minutes=30
+refresh_token_duration_hours=2
+access_token_invalid_timeout_minutes=3
 ```
 La clé de cryptage (encryption_key) peut être généré à l'aide de cette commande (par exemple, sur Linux) : 
 ```bash
