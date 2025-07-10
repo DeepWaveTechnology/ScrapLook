@@ -209,7 +209,7 @@ async def check_refresh_access_token(
 
     if (
         payload.get("exp") is not None
-        or datetime.now().astimezone() + access_token_timeout
+        and datetime.now().astimezone() + access_token_timeout
         >= datetime.fromtimestamp(payload.get("exp")).astimezone()
     ):
         APP_CONFIG.logger.info(
@@ -221,7 +221,7 @@ async def check_refresh_access_token(
     return False
 
 
-@router.get("/refresh_access_token", response_model=Token)
+@router.post("/refresh_access_token", response_model=Token)
 async def refresh_access_token(
     token: Annotated[str, Depends(oauth2_scheme)],
     prisma: Prisma = Depends(get_prisma_instance),

@@ -24,6 +24,12 @@ export function useAuth() {
     localStorage.removeItem('user_name');
   }
 
+  function saveAccessToken(newAccessToken: string): void {
+    localStorage.removeItem('access_token');
+    token.value = newAccessToken;
+    localStorage.setItem('access_token', newAccessToken);
+  }
+
   return {
     token,
     refreshToken,
@@ -31,5 +37,6 @@ export function useAuth() {
     isLoggedIn,
     login,
     logout,
+    saveAccessToken
   }
 }

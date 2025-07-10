@@ -1,3 +1,6 @@
 // src/config.js
 
-export const BACKEND_URL = "http://127.0.0.1:8000";
+const BACKEND_URL = "http://127.0.0.1:8000";
+const TIMEOUT_ACCESS_TOKEN_CHECK = "30000"
+
+export { BACKEND_URL, TIMEOUT_ACCESS_TOKEN_CHECK }
