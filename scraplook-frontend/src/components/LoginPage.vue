@@ -39,7 +39,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuth } from '@/composables/useAuth' // ✅ Ajouté
+import { useAuth } from '@/composables/useAuth'
 import { BACKEND_URL } from '@/config'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
@@ -55,7 +55,7 @@ const loading = ref(false)
 const successMessage = ref('')
 const errorMessage = ref('')
 const router = useRouter()
-const { login } = useAuth() // ✅ Appel du composable
+const { login } = useAuth()
 
 async function submitForm() {
   loading.value = true
@@ -81,7 +81,6 @@ async function submitForm() {
       throw new Error(data.detail || "Erreur d'authentification")
     }
 
-    // ✅ Appel du login du composable
     login(data.access_token, form.value.name)
 
     successMessage.value = 'Connexion réussie !'
